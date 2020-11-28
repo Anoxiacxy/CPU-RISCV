@@ -2,13 +2,13 @@ module mem_ctrl (
     input wire clk,
     input wire rst,
     
-    input wire                  inst_read,
+    input wire                  inst_read_request,
     input wire [`MemAddrBus]    inst_addr,
     output reg                  inst_done,
     output reg [`MemDataBus]    inst_data,
 
-    input wire                  mem_read,
-    input wire                  mem_write,
+    input wire                  mem_read_request,
+    input wire                  mem_write_request,
     input wire                  mem_signed,
     input wire [`MemAddrBus]    mem_addr,
     input wire [1 : 0]          mem_len, 
@@ -27,7 +27,7 @@ module mem_ctrl (
     reg [`RamAddrBus]           ahead_addr;
     reg [`MemDataBus]           mem_ret[2 : 0];
 
-    reg [`ByteBus]              cache[`CacheSize];
+    
 
 
     always @ (*) begin

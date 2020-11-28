@@ -1,6 +1,7 @@
 module pc_reg(
     input wire clk,
     input wire rst,
+    input wire rdy,
 
     input wire[`StallBus] stall,
 
@@ -8,7 +9,7 @@ module pc_reg(
 );
     always @ (posedge clk) begin
         if (rst == `ResetEnable) 
-            ce <= `ChipDisable;
+            
         else
             ce <= `ChipEnable;
     end
