@@ -29,7 +29,6 @@ module cpu(
 // - 0x30004 write: indicates program stop (will output '\0' through uart tx)
 
 
-
 always @(posedge clk_in) begin
     if (rst_in) begin
       

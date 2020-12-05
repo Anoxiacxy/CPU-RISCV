@@ -7,10 +7,7 @@ module pc_reg(
     output reg[`InstAddrBus] pc,
 );
     always @ (posedge clk) begin
-        if (rst == `ResetEnable) 
-            ce <= `ChipDisable;
-        else
-            ce <= `ChipEnable;
+        
     end
 
 
