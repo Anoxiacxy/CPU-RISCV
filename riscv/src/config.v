@@ -1,4 +1,4 @@
-`define ZERO            32'h00000000
+`define Zero            32'h00000000
 `define True            1'b1
 `define False           1'b0
 
