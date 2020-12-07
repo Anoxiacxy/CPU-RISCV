@@ -25,3 +25,6 @@
 `define RegNum          32
 
 `define StallBus        5:0
+`define Hold            2'b01
+`define Pass            2'b00
+`define Bubb            2'b11
