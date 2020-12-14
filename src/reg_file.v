@@ -1,4 +1,3 @@
-`include "config.v"
 module regfile (
     input wire rst,
     input wire clk,
@@ -19,33 +18,33 @@ module regfile (
     integer i;
 
     always @ (posedge clk) begin
-        if (rst == `ResetDisable) begin
-            if ((we == `WriteEnable) && (waddr != `RegAddrWidth'b0))
+        if (!rst) begin
+            if (we && waddr)
                 reg[waddr] <= wdata;
         end else begin
             for (i = 0; i < `RegNum; i = i + 1)
-                reg[i] <= `ZERO            
+                reg[i] <= `ZeroWord            
         end
     end
 
     always @ (*) begin
-        if ((rst == `ResetDisable) && (re1 == `ReadEnable) && (raddr1 != `RegAddrWidth'b0)) begin
-            if ((we == `WriteEnable) && (waddr == raddr1))
+        if (!rst && re1 && raddr1) begin
+            if (we && (waddr == raddr1))
                 rdata1 <= wdata;
             else
                 rdata1 <= reg[raddr1];
         end else
-            rdata1 <= `ZERO;
+            rdata1 <= `ZeroWord;
     end
 
     always @ (*) begin
-        if ((rst == `ResetDisable) && (re2 == `ReadEnable) && (raddr2 != `RegAddrWidth'b0)) begin
-            if ((we == `WriteEnable) && (waddr == raddr2))
+        if (!rst && re2 && raddr2) begin
+            if (we && (waddr == raddr2))
                 rdata2 <= wdata;
             else
                 rdata2 <= reg[raddr2];
         end else
-            rdata2 <= `ZERO;
+            rdata2 <= `ZeroWord;
     end
 
 endmodule

@@ -9,24 +9,24 @@ module stall_ctrl (
 
     output wire [1:0] stall_pcreg,
     output wire [1:0] stall_if_id,
-    output wire stall_id_ex,
-    output wire stall_ex_mem,
-    output wire stall_mem_wb
+    output wire [1:0] stall_id_ex,
+    output wire [1:0] stall_ex_mem,
+    output wire [1:0] stall_mem_wb
 );
     wire [9:0] stall;
     always @(*) begin
         if (rst) 
-            stall = {Pass, Pass, Pass, Pass, Pass};
+            stall = {Bubb, Bubb, Bubb, Bubb, Bubb};
         else if (stall_mem) 
-            stall = {Hold, Hold, Hold, Hold, };
+            stall = {Hold, Hold, Hold, Hold, Bubb};
         else if (stall_ex)
-            stall = 5'b11110;
+            stall = {Hold, Hold, Hold, Bubb, Pass};
         else if (stall_id)
-            stall = 5'b11100;
+            stall = {Hold, Hold, Bubb, Pass, Pass};
         else if (stall_if)
-            stall = 5'b11000;
+            stall = {Hold, Bubb, Pass, Pass, Pass};
         else 
-            stall = 5'b00000;
+            stall = {Pass, Pass, Pass, Pass, Pass};
     end
 
     assign stall_pcreg = stall[9:8];
