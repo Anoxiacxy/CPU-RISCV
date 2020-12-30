@@ -1,4 +1,4 @@
-module stall_ctrl (
+module ctrl_stall (
     input wire clk,
     input wire rst,
 
@@ -7,7 +7,7 @@ module stall_ctrl (
     input wire stall_ex,
     input wire stall_mem,
 
-    output wire [1:0] stall_pcreg,
+    output wire [1:0] stall_reg_pc,
     output wire [1:0] stall_if_id,
     output wire [1:0] stall_id_ex,
     output wire [1:0] stall_ex_mem,
@@ -29,7 +29,7 @@ module stall_ctrl (
             stall = {Pass, Pass, Pass, Pass, Pass};
     end
 
-    assign stall_pcreg = stall[9:8];
+    assign stall_reg_pc = stall[9:8];
     assign stall_if_id = stall[7:6];
     assign stall_id_ex = stall[5:4];
     assign stall_ex_mem = stall[3:2];

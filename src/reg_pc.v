@@ -1,10 +1,11 @@
-module pcreg (
+module reg_pc (
     input wire clk,
     input wire rst,
-    input wire [1:0] stall,
+    input wire [`StallBus] stall,
 
     input wire branch,
     input wire [`InstAddrBus] target,
+
     input wire [`InstAddrBus] pc_i,
     output reg [`InstAddrBus] pc_o
 );

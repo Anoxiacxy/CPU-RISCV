@@ -23,7 +23,7 @@ module regfile (
                 reg[waddr] <= wdata;
         end else begin
             for (i = 0; i < `RegNum; i = i + 1)
-                reg[i] <= `ZeroWord            
+                reg[i] <= 0;            
         end
     end
 
@@ -34,7 +34,7 @@ module regfile (
             else
                 rdata1 <= reg[raddr1];
         end else
-            rdata1 <= `ZeroWord;
+            rdata1 <= 0;
     end
 
     always @ (*) begin
@@ -44,7 +44,7 @@ module regfile (
             else
                 rdata2 <= reg[raddr2];
         end else
-            rdata2 <= `ZeroWord;
+            rdata2 <= 0;
     end
 
 endmodule

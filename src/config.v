@@ -28,63 +28,104 @@
 `define Bubb            2'b11
 
 // inst 
-`define inst_lui    0
-`define inst_auipc  1
-`define inst_jal    2
-`define inst_jalr   3
-`define inst_beq    4
-`define inst_bne    5
-`define inst_blt    6
-`define inst_bge    7
-`define inst_bltu   8
-`define inst_bgeu   9  
-`define inst_lb     10
-`define inst_lh     11
-`define inst_lw     12
-`define inst_lbu    13
-`define inst_lhu    14
-`define inst_sb     15
-`define inst_sh     16
-`define inst_sw     17
-`define inst_addi   18
-`define inst_slti   19
-`define inst_sltiu  20
-`define inst_xori   21
-`define inst_ori    22
-`define inst_addi   23
-`define inst_slli   24
-`define inst_srli   25
-`define inst_srai   26
-`define inst_add    27
-`define inst_sub    28
-`define inst_sll    29
-`define inst_slt    30
-`define inst_sltu   31
-`define inst_xor    32
-`define inst_srl    33
-`define inst_sra    34
-`define inst_or     35
-`define inst_and    36
+`define InstLui    0
+`define InstAuipc  1
+`define InstJal    2
+`define InstJalr   3
+`define InstBeq    4
+`define InstBne    5
+`define InstBlt    6
+`define InstBge    7
+`define InstBltu   8
+`define InstBgeu   9  
+`define InstLb     10
+`define InstLh     11
+`define InstLw     12
+`define InstLbu    13
+`define InstLhu    14
+`define InstSb     15
+`define InstSh     16
+`define InstSw     17
+`define InstAddi   18
+`define InstSlti   19
+`define InstSltiu  20
+`define InstXori   21
+`define InstOri    22
+`define InstAddi   23
+`define InstSlli   24
+`define InstSrli   25
+`define InstSrai   26
+`define InstAdd    27
+`define InstSub    28
+`define InstSll    29
+`define InstSlt    30
+`define InstSltu   31
+`define InstXor    32
+`define InstSrl    33
+`define InstSra    34
+`define InstOr     35
+`define InstAnd    36
 // catagory
-`define catagory_shifts     0
-`define catagory_arithmetic 1
-`define catagory_ 1
+`define CatagoryBus     2:0
+`define CatagoryShift  0
+`define OpSll  0
+`define OpSrl  1
+`define OpSra  2
+
+`define CatagoryArith  1
+`define OpAdd  0 
+`define OpSub  1
+
+`define CatagoryLogic  2
+`define OpXor  0
+`define OpOr   1
+`define OpAnd  2
+
+`define CatagoryComp   3
+`define OpSlt  0
+`define OpSltu 1
+
+`define CatagoryBranch 4
+`define OpEq   0
+`define OpNe   1
+`define OpLt   2
+`define OpGe   3
+`define OpLtu  4
+`define OpGeu  5
+
+`define CatagoryJump   5
+`define CatagoryLoad   6
+`define CatagoryStore  7
+
 // op
-`define op_add  0
-`define op_sub  1
+`define OpBus  2:0
 
-`define op_sll  0
-`define op_srl  1
+
+`define OpcodeLui       7'b0110111
+`define OpcodeAuipc     7'b0010111
+`define OpcodeJal       7'b1101111
+`define OpcodeJalr      7'b1100111
+`define OpcodeBranch    7'b1100011
+`define OpcodeLoad      7'b0000011
+`define OpcodeStore     7'b0100011
+`define OpcodeOpi       7'b0010011
+`define OpcodeOp        7'b0110011
+
+`define BhtNum      2048
+`define LogBhtNum   11
+`define BhtIndex    `LogBhtNum + 1 : 2
+
+`define BtbNum      32
+`define LogBtbNum   5
+`define BtbIndex    `LogBtbNum + 1 : 2
+`define BtbTag      31 : `LogBtbNum + 2
+
+`define RamAval     2'b00
+`define RamInst     2'b01
+`define RamMemr     2'b10
+`define RamMemw     2'b11
+
+
+
+
 `define 
-
-`define op_slt  3
-`define op_sltu 4
-`define op_xor  5
-`define op_sra  6
-`define op_srl  7
-`define op_or   8
-`define op_and  9
-`define op_eq   10
-
-
-
