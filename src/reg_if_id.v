@@ -2,6 +2,7 @@ module reg_if_id (
     input wire clk,
     input wire rst,
     input wire [`StallBus] stall,
+    input wire branch_error,
 
     input wire [`InstAddrBus]   pc_i,
     input wire [`InstBus]       inst_i,
@@ -15,7 +16,7 @@ module reg_if_id (
 );
 
     always @ (posedge clk or posedge rst) begin
-        if (rst || stall == `Bubb) begin
+        if (rst || stall == `Bubb || branch_error) begin
             pc_o        <= 0;
             inst_o      <= 0;
             next_pc_i   <= 0;
@@ -26,10 +27,7 @@ module reg_if_id (
             next_pc_o   <= next_pc_i;
             predict_result_o <= predict_result_i;
         end else if (stall == `Hold) begin
-            pc_o        <= pc_o;
-            inst_o      <= inst_o;
-            next_pc_o   <= next_pc_o;
-            predict_result_o <= predict_result_o;
+            
         end
     end
 

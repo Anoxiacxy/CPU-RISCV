@@ -11,13 +11,17 @@ module stage_id (
 
     output reg read_request2, //
     output reg [`RegAddrBus]    read_addr2, //
-    input wire [`RegBus]        read_data2,
+    input wire [`RegBus]        read_data2, 
 
     output reg [`RegBus]        rs1_data, //
+    output reg                  rs1_request, //
+    output reg [`RegAddrBus]    rs1_addr, //
     output reg [`RegBus]        imm1, //
     output reg imm_rs1_sel, //
 
     output reg [`RegBus]        rs2_data, //
+    output reg                  rs2_request, //
+    output reg [`RegAddrBus]    rs2_addr, //
     output reg [`RegBus]        imm2, //
     output reg imm_rs2_sel, //
 
@@ -30,22 +34,20 @@ module stage_id (
 
     output reg branch, //
     output reg jump, //
-    output reg [`InstAddrBus] branch_addr, //
-    output reg [`InstAddrBus] branch_offset, //   
+    output reg [`InstAddrBus]   branch_addr, //
+    output reg                  branch_addr_change, //
+    output reg [`InstAddrBus]   branch_offset, //   
 
-    input reg ex_load,
-    input reg ex_write,
-    input reg [`RegAddrBus] ex_rd_addr,
-    input reg [`RegBus]     ex_rd_data,
-    input reg mem_write,
-    input reg [`RegAddrBus] mem_rd_addr,
-    input reg [`RegBus]     mem_rd_data,
-
-    input wire predict_i,
-    output reg predict_o, //
+    input wire predict_result_i,
+    input wire npc_i,
+    output reg predict_result_o, //
+    output reg npc_o,
 
     output wire stall_o //
 );
+    assign npc_o = npc_i;
+    assign predict_result_o = predict_result_i;
+
     wire [6 : 0] func7  = inst_i[31 : 25];
     wire [2 : 0] func3  = inst_i[14 : 12];
     wire [6 : 0] opcode = inst_i[6  : 0 ];
@@ -60,7 +62,7 @@ module stage_id (
     wire [`RegBus] imm, imm1, imm2;
     // for imm
     always @ (*) begin
-        case (opcode) begin
+        case (opcode) 
             `OpcodeLui:     imm <= imm_U_type;  rd_write <= `True;  rd_load <= `False; // lui
             `OpcodeAuipc:   imm <= imm_U_type;  rd_write <= `True;  rd_load <= `False; // auipc
             `OpcodeJal:     imm <= imm_J_type;  rd_write <= `True;  rd_load <= `False; // jal
@@ -71,28 +73,32 @@ module stage_id (
             `OpcodeOpi:     imm <= imm_I_type;  rd_write <= `True;  rd_load <= `False; // opi
             `OpcodeOp:      imm <= 0;           rd_write <= `True;  rd_load <= `False; // op
             default:        imm <= 0;           rd_write <= `False; rd_load <= `False; // default
-        end
+        endcase
     end
 
     // for branch_addr, branch_offset, branch, jump
     always @ (*) begin
         if (opcode == `OpcodeJal) begin
             branch_addr <= pc_i;
+            branch_addr_change = `False;
             branch_offset <= imm;
             jump <= `True;
             branch <= `False;
         end else if (opcode == `OpcodeJalr) begin
             branch_addr <= rs1_data;
+            branch_addr_change = `True;
             branch_offset <= imm;
             jump <= `True;
             branch <= `True;
         end else if (opcode == `OpcodeBranch) begin
             branch_addr <= pc_i;
+            branch_addr_change = `False;
             branch_offset <= imm;
             jump <= `False;
             branch <= `True;
         end else begin
             branch_addr <= 0;
+            branch_addr_change = `False;
             branch_offset <= 0;
             jump <= `False;
             branch <= `False;
@@ -102,64 +108,18 @@ module stage_id (
     assign pc_o = pc_i;
 
     assign rd_addr = inst_i[11 : 7];
-    wire [`RegAddrBus] rs1_addr = inst_i[19 : 15];
-    wire [`RegAddrBus] rs2_addr = inst_i[24 : 20];
+    assign rs1_addr = inst_i[19 : 15];
+    assign rs2_addr = inst_i[24 : 20];
 
     assign read_addr1 = rs1_addr;
     assign read_addr2 = rs2_addr;
+    
+    assign stall_o = `False;
 
-    wire stall_o1;
-    wire stall_o2;
-    assign stall_o = stall_o1 || stall_o2;
+    assign rs1_data <= (rs1_request && rs1_addr) ? read_data1 : 0;
+    assign rs2_data <= (rs2_request && rs2_addr) ? read_data2 : 0;
 
-    // for rs1_data, stall_o1
-    always @ (*) begin
-        if (!read_request1 || !rs1_addr) begin
-            stall_o1 <= `False;
-            rs1_data <= 0;
-        end            
-        else if (ex_load && (rs1_addr == ex_rd_addr)) begin
-            stall_o1 <= `True;
-            rs1_data <= 0;
-        end
-        else if (ex_write && (rs1_addr == ex_rd_addr)) begin
-            stall_o1 <= `False;
-            rs1_data <= ex_rd_data;
-        end
-        else if (mem_write && (rs1_addr == mem_rd_addr)) begin
-            stall_o1 <= `False;
-            rs1_data <= mem_rd_data;
-        end
-        else begin
-            stall_o1 <= `False;
-            rs1_data <= read_data1;
-        end
-    end
-
-    // for rs2_data, stall_o2
-    always @ (*) begin
-        if (!read_request2 || !rs2_addr) begin
-            stall_o2 <= `False; rs2_data <= 0;
-        end            
-        else if (ex_load && (rs2_addr == ex_rd_addr)) begin
-            stall_o2 <= `True;
-            rs2_data <= 0;
-        end
-        else if (ex_write && (rs2_addr == ex_rd_addr)) begin
-            stall_o2 <= `False;
-            rs2_data <= ex_rd_data;
-        end
-        else if (mem_write && (rs2_addr == mem_rd_addr)) begin
-            stall_o2 <= `False;
-            rs2_data <= mem_rd_data;
-        end
-        else begin
-            stall_o2 <= `False;
-            rs2_data <= read_data2;
-        end
-    end
-
-    // for read_request1, read_reequest2
+    // for read_request1, read_request2
     always @ (*) begin
         if (opcode == 7'b0110111 || opcode == 7'b0010111 || opcode == 7'b1101111) begin
             read_request1 <= `False;
@@ -173,17 +133,19 @@ module stage_id (
         end     
     end
 
+    assign rs1_request = read_request1;
+    assign rs2_request = read_request2;
 
     // for catagory, op
     always @ (*) begin
-        case (opcode) begin
+        case (opcode) 
             7'b0110111: begin catagory <= `CatagoryArith;   op <= `OpAdd;   end // lui
             7'b0010111: begin catagory <= `CatagoryArith;   op <= `OpAdd;   end // auipc
             7'b1101111: begin catagory <= `CatagoryArith;   op <= `OpAdd;   end // jal
             7'b1100111: begin catagory <= `CatagoryArith;   op <= `OpAdd;   end // jalr
             7'b1100011: begin
                 catagory <= `CatagoryBranch;
-                case (func3) begin
+                case (func3) 
                     3'b000: op <= `OpEq; // beq
                     3'b001: op <= `OpNe; // bne
                     3'b100: op <= `OpLt; // blt
@@ -191,12 +153,12 @@ module stage_id (
                     3'b110: op <= `OpLtu; // bltu
                     3'b111: op <= `OpGeu; // bgeu
                     default: op <= `OpEq; // default
-                end
+                endcase
             end // branch
             7'b0000011: begin catagory <= `CatagoryLoad;    op <= func3;    end // load
             7'b0100011: begin catagory <= `CatagoryStore;   op <= func3;    end // store
             7'b0010011: begin
-                case (func3) begin
+                case (func3) 
                     3'b000: begin catagory <= `CatagoryArith;   op <= `OpAdd;   end // add
                     3'b010: begin catagory <= `CatagoryComp;    op <= `OpSlt;   end // slt
                     3'b011: begin catagory <= `CatagoryComp;    op <= `OpSltu;  end // sltu
@@ -209,10 +171,10 @@ module stage_id (
                         else        op <= `OpSra; // sra
                     end
                     default: begin catagory <= `CatagoryArith; op <= `OpAdd; end // default
-                end
+                endcase
             end // opi
             7'b0110011: begin
-                case (func3) begin
+                case (func3) 
                     3'b000: begin catagory <= `CatagoryArith;
                         if (!inst_i[30])    op <= `OpAdd; // add
                         else                op <= `OpSub; // sub
@@ -228,10 +190,10 @@ module stage_id (
                         else        op <= `OpSra; // sra
                     end 
                     default: begin catagory <= `CatagoryArith; op <= `OpAdd; end // default
-                end
+                endcase
             end // op
             default: begin catagory <= `CatagoryArith; op <= `OpAdd; end // default
-        end
+        endcase
         
     end
 

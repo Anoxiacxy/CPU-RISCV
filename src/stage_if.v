@@ -2,21 +2,22 @@ module stage_if (
     input wire [`InstAddrBus] pc_i,
 
     output reg ram_request,
-    output reg [`InstAddrBus] ram_pc_o,
-    input wire [`InstBus] ram_inst_i,
-    input wire ram_ready,
+    input wire ram_done,
 
-    output reg [`InstBus] inst_o,
-    output reg [`InstAddrBus] pc_o,
-    output reg [`InstAddrBus] pc_o_ctrl_branch,
+    input wire [`RegBus]        inst_i,
+    output reg [`InstBus]       inst_o,
+    output reg [`InstAddrBus]   pc_o1,
+    output reg [`InstAddrBus]   pc_o2,
+    output reg [`InstAddrBus]   pc_o3,
 
     output reg stall_o
 );
+
+    assign pc_o1 = pc_i; // next stage
+    assign pc_o2 = pc_i; // if
+    assign pc_o3 = pc_i; // next pc
     assign ram_request = `True;
-    assign ram_pc_o = pc_i;
-    assign inst_o   = !ram_ready ? 0 : ram_inst_i;
-    assign pc_o     = pc_i;
-    assign pc_o_ctrl_branch = pc_i;
-    assign stall_o  = !ram_ready;
+    assign stall_o = !ram_done; // done if inst match pc
+    assign inst_o = ram_done ? inst_i : 0;
 
 endmodule

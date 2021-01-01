@@ -1,12 +1,10 @@
 module stage_mem(
     input wire [`RegAddrBus]    rd_addr_i, 
     input wire                  rd_write_i,
-    input wire                  rd_load_i, 
     input wire [`RegBus]        rd_data_i, 
 
     output reg [`RegAddrBus]    rd_addr_o, //
     output reg                  rd_write_o, //
-    output reg                  rd_load_o, //
     output reg [`RegBus]        rd_data_o, //
 
     input wire  [`MemAddrBus]   mem_addr_i, 
@@ -36,8 +34,6 @@ module stage_mem(
     assign mem_w_data = mem_data_i;
 
     assign stall_o = !mem_done;
-
-    
 
     always @ (*) begin
         case (catagory) begin

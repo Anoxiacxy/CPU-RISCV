@@ -118,14 +118,25 @@
 `define BtbNum      32
 `define LogBtbNum   5
 `define BtbIndex    `LogBtbNum + 1 : 2
-`define BtbTag      31 : `LogBtbNum + 2
+`define BtbTag      17 : `LogBtbNum + 2
 
 `define RamAval     2'b00
 `define RamInst     2'b01
 `define RamMemr     2'b10
 `define RamMemw     2'b11
 
+`define ICacheSize  64
+`define ICacheBlockSize 4
+`define LogICacheSize  6
+`define ICacheOffset 1 : 0
+`define ICacheIndex  `LogICacheSize + 1 : 2
+`define ICacheTag    17 : `LogICacheSize + 2
 
-
+`define DCacheSize  64
+`define DCacheBlockSize  4
+`define LogDCacheSize  6
+`define DCacheOffset 1 : 0
+`define DCacheIndex  `LogDCacheSize + 1 : 2
+`define DCacheTag    17 : `LogDCacheSize + 2
 
 `define 

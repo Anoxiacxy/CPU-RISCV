@@ -1,26 +1,26 @@
-module regfile (
+module reg_file (
     input wire rst,
     input wire clk,
     
-    input wire[`RegAddrBus] waddr,
-    input wire we,
-    input wire[`RegBus]     wdata,
+    input wire[`RegAddrBus] w_addr,
+    input wire write_request,
+    input wire[`RegBus]     w_data,
 
-    input wire[`RegAddrBus] raddr1,
-    input wire re1,
-    output reg[`RegBus]     rdata1,
+    input wire[`RegAddrBus] r_addr1,
+    input wire read_request1,
+    output reg[`RegBus]     r_data1,
 
-    input wire[`RegAddrBus] raddr2,
-    input wire re2,
-    output reg[`RegBus]     rdata2,
+    input wire[`RegAddrBus] r_addr2,
+    input wire read_request2,
+    output reg[`RegBus]     r_data2,
 )
     reg[`RegBus] register[`RegNum - 1 : 0];
     integer i;
 
     always @ (posedge clk) begin
         if (!rst) begin
-            if (we && waddr)
-                reg[waddr] <= wdata;
+            if (write_request && w_addr)
+                reg[w_addr] <= w_data;
         end else begin
             for (i = 0; i < `RegNum; i = i + 1)
                 reg[i] <= 0;            
@@ -28,23 +28,23 @@ module regfile (
     end
 
     always @ (*) begin
-        if (!rst && re1 && raddr1) begin
-            if (we && (waddr == raddr1))
-                rdata1 <= wdata;
+        if (!rst && read_request1 && r_addr1) begin
+            if (write_request && (w_addr == r_addr1))
+                r_data1 <= w_data;
             else
-                rdata1 <= reg[raddr1];
+                r_data1 <= reg[r_addr1];
         end else
-            rdata1 <= 0;
+            r_data1 <= 0;
     end
 
     always @ (*) begin
-        if (!rst && re2 && raddr2) begin
-            if (we && (waddr == raddr2))
-                rdata2 <= wdata;
+        if (!rst && read_request2 && r_addr2) begin
+            if (write_request && (w_addr == r_addr2))
+                r_data2 <= w_data;
             else
-                rdata2 <= reg[raddr2];
+                r_data2 <= reg[r_addr2];
         end else
-            rdata2 <= 0;
+            r_data2 <= 0;
     end
 
 endmodule
