@@ -7,7 +7,7 @@
 `define InstBus         31:0
 `define MemAddrBus      31:0
 `define MemDataBus      31:0
-`define ByteBus         8:0
+`define ByteBus         7:0
 `define StallBus        1:0
 
 `define ResetEnable     1'b1
@@ -86,10 +86,11 @@
 `define BtbIndex    `LogBtbNum + 1 : 2
 `define BtbTag      17 : `LogBtbNum + 2
 
-`define RamAval     2'b00
-`define RamInst     2'b01
-`define RamMemr     2'b10
-`define RamMemw     2'b11
+`define RamAval     3'b000
+`define RamInst     3'b001
+`define RamMemr     3'b010
+`define RamMemw     3'b011
+`define RamAhad     3'b100
 
 `define ICacheSize  64
 `define ICacheBlockSize 4

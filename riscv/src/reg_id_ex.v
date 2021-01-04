@@ -59,9 +59,9 @@ module reg_id_ex (
     output reg [`InstAddrBus]   branch_offset_o,
 
     input wire predict_result_i,
-    input wire npc_i,
+    input wire [`InstAddrBus]   npc_i,
     output reg predict_result_o, //
-    output reg npc_o
+    output reg [`InstAddrBus]   npc_o
 
 );
 

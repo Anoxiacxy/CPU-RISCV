@@ -18,8 +18,8 @@ module stage_mem(
     output wire                  mem_signed,
     output wire  [`MemAddrBus]   mem_addr_o,
     output wire  [1 : 0]         mem_len_o,
-    input wire                  mem_r_data,
-    output wire                  mem_w_data,
+    input wire  [`MemDataBus]   mem_r_data,
+    output wire [`MemDataBus]   mem_w_data,
     input wire                  mem_done,    
     
     output wire  stall_o
@@ -33,7 +33,7 @@ module stage_mem(
     assign mem_len_o  = op[1 : 0];
     assign mem_w_data = mem_data_i;
 
-    assign stall_o = !mem_done;
+    assign stall_o = (`CatagoryLoad == catagory || `CatagoryStore == catagory) && !mem_done;
 
     always @ (*) begin
         case (catagory) 

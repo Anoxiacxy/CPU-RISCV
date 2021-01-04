@@ -2,161 +2,258 @@
 module cache_d(
     input wire clk,
     input wire rst,
-
+    // sage_mem
     input wire                  sign_i,
     input wire [1 : 0]          len_i,
     input wire                  read_i,
     input wire                  write_i,
     input wire [`MemAddrBus]    addr_i,
-    output reg [`RegBus]        r_data_o,
-    input wire [`RegBus]        w_data_i,
+    output reg [`RegBus]        data_o,
+    input wire [`RegBus]        data_i,
     output reg                  done_o,
-    
-    output wire                  read_o,
-    output wire                  write_o,
-    output wire [`MemAddrBus]    addr_o,
-    input wire [`ByteBus]       r_data_i,
-    output wire [`ByteBus]       w_data_o,
-    input wire                  done_i
+    // ctrl_mem
+    output reg                  sign_o,
+    output reg                  read_o,
+    output reg [2 : 0]          len_o,
+    output reg [`MemAddrBus]    r_addr_o,
+    input wire  [`RegBus]       r_data_i,
+    input wire                  r_done_i,
+    input wire                  r_wait_i,
+
+    output wire                 write_o,
+    output wire [`MemAddrBus]   w_addr_o,
+    output wire [`ByteBus]      w_data_o,
+    input wire                  w_wait_i,
+    input wire                  writting
 );
-    integer i;
-    reg             cache_valid [`DCacheSize - 1 : 0];
-    reg             cache_dirty [`DCacheSize - 1 : 0];
+    reg [`DCacheSize - 1 : 0]            cache_valid;
+    reg [`DCacheSize - 1 : 0]            cache_dirty;
     reg [`RegBus]   cache_data  [`DCacheSize - 1 : 0];
     reg [`DCacheTag] cache_tag   [`DCacheSize - 1 : 0];
-    reg [`ByteBus]  cache_buffer[3 : 0];
-    reg [2 : 0]     working_stage;
-    reg miss;       
+    reg [`RegBus]       buffer;
+    wire [`ByteBus]     buffer_data[3 : 0];
+    reg [`MemAddrBus]   buffer_addr;
+    reg [2 : 0]         buffer_len;
+    
+    reg read_t;
+    reg write_t;
+    wire w_wait_t;
+    reg [2 : 0]     stage;
+    reg             working;
+    assign buffer_data[3] = buffer[31:24];
+    assign buffer_data[2] = buffer[23:16];
+    assign buffer_data[1] = buffer[15: 8];
+    assign buffer_data[0] = buffer[7 : 0];
+    assign w_addr_o = buffer_addr + stage;
+    assign w_data_o = buffer_data[stage];
+    assign w_wait_t = (working || write_t);
+    assign write_o  = w_wait_t && !w_wait_i;
 
-    wire index  = addr_i[`DCacheIndex];
-    wire tag    = addr_i[`DCacheTag];
-    wire offset = addr_i[`DCacheOffset];
-
-    initial begin
-        for (i = 0; i < `DCacheSize; i = i + 1) begin
-            cache_valid[i] <= `False;
-            cache_dirty[i] <= `False;
+    always @ (posedge clk) begin
+        if (rst) begin
+            stage <= 0;
+            working <= `False;
+        end else if (write_t) begin
+            if (stage + writting == buffer_len) begin
+                stage <= 0;
+                working <= `False;
+            end else begin
+                stage <= stage + writting;
+                working <= `True;
+            end 
+        end else if (write_o) begin
+            if (stage + writting == buffer_len) begin
+                stage <= 0;
+                working <= `False;
+            end else begin
+                stage <= stage + writting;
+            end 
         end
     end
 
+    wire [`DCacheIndex]     index  = addr_i[`DCacheIndex];
+    wire [`DCacheTag]       tag    = addr_i[`DCacheTag];
+    wire [`DCacheOffset]    offset = addr_i[`DCacheOffset];
+
+    wire buffer_miss = !w_wait_t && (buffer_addr != (addr_i - offset));       
+
+    wire io = (addr_i[17 : 16] == 2'b11);
+    
+    reg  [`ByteBus] io_r_data;
+    reg  [`ByteBus] io_w_data;
+
+    initial begin
+        cache_dirty <= 0;
+        cache_valid <= 0;
+    end
+
     reg [`ByteBus]  cur_r_data[3 : 0];
-    reg [`ByteBus]  cur_w_data[3 : 0];
     
     always @ (*) begin
-        case (len_i) 
-            0 : r_data_o <= {{24{sign_i && cur_r_data[offset][7]}}, cur_r_data[offset]};
-            1 : r_data_o <= {{16{sign_i && cur_r_data[offset + 1][7]}}, cur_r_data[offset + 1], cur_r_data[offset]};
-            2 : r_data_o <= {cur_r_data[3], cur_r_data[2], cur_r_data[1], cur_r_data[0]};
-        endcase
-    end
-
-    always @ (*) begin {
-            cur_w_data[3],
-            cur_w_data[2],
-            cur_w_data[1],
-            cur_w_data[0]
-        } <= w_data_i;
-    end
-
-    always @ (*) begin
-        if (rst) begin
-            done_o <= `True;
-            miss <= `False;
-        end else if (read_i) begin
-            if (cache_valid[index]) begin
-                if (tag == cache_tag[index]) begin {
+        if (io) begin
+            data_o <= io_r_data;        
+        end else begin
+            case (len_i) 
+                0 : data_o <= {
+                        {24{sign_i && cur_r_data[offset][7]}}, 
+                        cur_r_data[offset]
+                    };
+                1 : data_o <= {
+                        {16{sign_i && cur_r_data[offset + 1][7]}}, 
+                        cur_r_data[offset + 1], 
+                        cur_r_data[offset]
+                    };
+                2 : data_o <= {
                         cur_r_data[3], 
                         cur_r_data[2], 
                         cur_r_data[1], 
                         cur_r_data[0]
-                    } <= cache_data[index];
-                    done_o <= `True;
-                    miss   <= `False;
-                end else begin
-                    done_o <= `False;
-                    miss   <= `True;
-                    cur_r_data[3] <= 0;
-                    cur_r_data[2] <= 0;
-                    cur_r_data[1] <= 0;
-                    cur_r_data[0] <= 0;
-                end       
+                    };
+            endcase    
+        end
+        
+    end
+    
+    reg load_request;
+    reg write_request;
+    reg store_request;
+    reg flush_request;
+
+    always @ (*) begin
+        load_request = `False;
+        write_request = `False;
+        store_request  = `False;
+        flush_request = `False;
+        done_o = `False;
+        if (rst) begin
+        end else if (read_i) begin
+            if (io) begin
+                if (r_done_i) begin
+                    done_o = `True;
+                    io_r_data = r_data_i;
+                end else 
+                    load_request = `True;
+            end if (cache_valid[index] && tag == cache_tag[index]) begin {
+                    cur_r_data[3], 
+                    cur_r_data[2], 
+                    cur_r_data[1], 
+                    cur_r_data[0]
+                } = cache_data[index];
+                done_o <= `True;
+            end else if (len_i != 2) begin 
+                if (r_done_i) begin
+                    done_o = `True;
+                    {
+                        cur_r_data[3], 
+                        cur_r_data[2], 
+                        cur_r_data[1], 
+                        cur_r_data[0]
+                    } = r_data_i;
+                end else
+                    load_request = `True;
             end else begin
-                cache_dirty[index] <= `False;
-                miss <= `True;
-                done_o <= `False;
+                if (r_done_i) begin
+                    done_o = `True;
+                    {
+                        cur_r_data[3], 
+                        cur_r_data[2], 
+                        cur_r_data[1], 
+                        cur_r_data[0]
+                    } = r_data_i;
+                end else if (!cache_dirty[index]) begin
+                    load_request = `True;
+                end else if (!w_wait_t) begin
+                    flush_request = cache_valid[index];
+                    load_request = `True;
+                end else if (buffer_addr == {cache_tag[index], index, 2'b00}) begin
+                    load_request = `True;
+                end
             end
         end else if (write_i) begin
-            if (cache_valid[index]) begin
-                if (tag == cache_tag[index]) begin
-                    case (len_i) 
-                        0 : cache_data[index] <= {cache_data[index][31 : 8], cur_w_data[offset]};
-                        1 : cache_data[index] <= {cache_data[index][31 : 16], cur_w_data[offset + 1], cur_w_data[offset]};
-                        2 : cache_data[index] <= {cur_w_data[3], cur_w_data[2], cur_w_data[1], cur_w_data[0]};
-                    endcase
-                    cache_dirty[index] <= `True;
-                    done_o  <= `True;
-                    miss    <= `False;
-                end else begin           
-                    done_o  <= `False;
-                    miss    <= `True;
+            if (io) begin
+                if (!w_wait_t) begin
+                    done_o = `True;
+                    store_request = `True;
+                end
+            end
+            if (cache_valid[index] && tag == cache_tag[index]) begin
+                done_o = `True;
+                write_request = `True;
+            end else if (len_i != 2) begin
+                if (!w_wait_t) begin
+                    done_o = `True;
+                    store_request = `True;
                 end
             end else begin
-                cache_dirty[index] <= `False;
-                miss    <= `True;
-                done_o  <= `False;
+                if (!cache_dirty[index]) begin
+                    write_request = `True;
+                    done_o = `True;
+                end else if (!w_wait_t) begin
+                    flush_request = cache_valid[index];
+                    write_request = `True;
+                    done_o = `True;
+                end
             end
-        end else begin
-            done_o  <= `True;
-            miss    <= `False;
         end
     end
 
-    wire [`ByteBus]  cur_cw_data[3 : 0];
-    reg [`ByteBus]  cur_cr_data[3 : 0];
+    reg update;
+    always @ (posedge clk) begin
+        read_t <= load_request && buffer_miss;
+        update <= (len_i == 2);
+        sign_o <= sign_i;
+        len_o <= (1 << len_i);
+        r_addr_o <= addr_i;
+    end
 
-    assign {cur_cw_data[3], cur_cw_data[2], cur_cw_data[1], cur_cw_data[0]} = cache_data[index];
+    always @ (*) begin 
+        read_o = read_t && !r_wait_i;
+    end
 
-    assign addr_o = addr_i - offset + working_stage;
-    assign w_data_o = cur_cw_data[working_stage];
-    
-    assign read_o = miss && !cache_dirty[index];
-    assign write_o = miss && cache_dirty[index];
-
-    always @ (clk) begin
+    always @ (posedge clk) begin
         if (rst) begin
-            for (i = 0; i < `DCacheSize; i = i + 1) begin
-                cache_valid[i] <= `False;
-                cache_dirty[i] <= `False;
-            end
-            working_stage <= 0;
-        end else if (read_o) begin
-            if (done_i) begin
-                if (working_stage + 1 < `DCacheBlockSize) begin
-                    cur_cr_data[working_stage] <= r_data_i;
-                    working_stage <= working_stage + 1;
-                end else if (working_stage + 1 == `DCacheBlockSize) begin
-                    working_stage <= 0;
-                    cache_valid[index] <= `True;
-                    cache_tag[index] <= tag;
-                    cache_data[index] <= {
-                        r_data_i,
-                        cur_cr_data[2],
-                        cur_cr_data[1],
-                        cur_cr_data[0]
-                    };
-                end
-            end
-        end else if (write_o) begin
-            if (done_i) begin
-                if (working_stage + 1 < `DCacheBlockSize) begin                    
-                    working_stage <= working_stage + 1;
-                end else if (working_stage + 1 == `DCacheBlockSize) begin
-                    working_stage <= 0;
-                    cache_valid[index] <= `False;
-                end
-            end
+            write_t <= `False;
+            buffer_len <= 0;
+            buffer_addr <= 0;
+            buffer <= 0;
+        end else if (store_request || flush_request) begin
+            write_t <= `True;
+            buffer_len <= flush_request ? 4 : (1 << len_i);
+            buffer_addr <= flush_request ? {cache_tag[index], index, 2'b00} : addr_i;
+            buffer <= flush_request ? cache_data[index] : data_i;
         end else begin
-            working_stage = 0;
+            write_t <= `False;
+        end
+    end
+
+    always @ (posedge clk) begin
+        if (rst) begin
+            cache_valid <= 0;
+            cache_dirty <= 0;
+        end else if (write_request) begin
+            cache_dirty[index] <= `True;
+            if (len_i == 0) begin
+                case (offset) 
+                    0: cache_data[index][7 : 0] <= data_i[7 : 0];
+                    1: cache_data[index][15: 8] <= data_i[7 : 0];
+                    2: cache_data[index][23:16] <= data_i[7 : 0];
+                    3: cache_data[index][31:24] <= data_i[7 : 0];
+                endcase 
+            end else if (len_i == 1) begin
+                if (offset[1]) 
+                    cache_data[index][31:16] <= data_i[15: 0];
+                else
+                    cache_data[index][15: 0] <= data_i[15: 0];
+            end else begin
+                cache_data[index] <= data_i;
+                cache_tag[index] <= tag;
+                cache_valid[index] <= `True;
+            end
+        end else if (r_done_i && update && read_t) begin
+            cache_valid[index] = `True;
+            cache_dirty[index] = `False;
+            cache_tag[index] = tag;
+            cache_data[index] = r_data_i;
         end
     end
 

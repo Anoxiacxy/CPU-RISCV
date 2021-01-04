@@ -4,14 +4,5 @@ Running: C:/Xilinx/Vivado/2020.1/bin/unwrapped/win64.o/xelab.exe -wto 5653cd0beb
 Using 2 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 9 for port 'inst_data' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:220]
-WARNING: [VRFC 10-3091] actual bit length 8 differs from formal bit length 9 for port 'ram_w_data' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:231]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 9 for port 'data_i' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:244]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'npc_i' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:365]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'npc_o' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:367]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'npc_i' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:426]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'npc_o' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:428]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'mem_r_data' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:536]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'mem_w_data' [C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v:537]
 Completed static elaboration
 INFO: [XSIM 43-4323] No Change in HDL. Linking previously generated obj files to create kernel

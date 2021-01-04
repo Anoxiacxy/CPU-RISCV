@@ -13,10 +13,9 @@ module reg_pc (
     always @ (posedge clk) begin
         if (rst || stall == `Bubb) begin
             pc_o <= `ZeroWord;
-        end else if (stall == `Pass) begin
-            if (branch_error)
-                pc_o <= branch_npc;
-            else
+        end else if (branch_error) begin
+            pc_o <= branch_npc;
+        end else if (stall == `Pass) begin 
                 pc_o <= pc_i;
         end else if (stall == `Hold) begin
             

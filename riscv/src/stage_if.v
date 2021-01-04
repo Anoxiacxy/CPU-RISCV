@@ -1,4 +1,6 @@
 module stage_if (
+    input wire rst,
+
     input wire [`InstAddrBus] pc_i,
 
     output wire ram_request,
@@ -13,11 +15,11 @@ module stage_if (
     output wire stall_o
 );
 
-    assign pc_o1 = pc_i; // next stage
+    assign pc_o1 = rst ? 0 : pc_i; // next stage
     assign pc_o2 = pc_i; // if
     assign pc_o3 = pc_i; // next pc
-    assign ram_request = `True;
+    assign ram_request = rst ? `False : `True;
     assign stall_o = !ram_done; // done if inst match pc
-    assign inst_o = ram_done ? inst_i : 0;
+    assign inst_o = (!rst && ram_done) ? inst_i : 0;
 
 endmodule

@@ -39,9 +39,9 @@ module stage_id (
     output reg [`InstAddrBus]   branch_offset, //   
 
     input wire predict_result_i,
-    input wire npc_i,
+    input wire [`InstAddrBus]   npc_i,
     output wire predict_result_o, //
-    output wire npc_o,
+    output wire [`InstAddrBus]  npc_o,
 
     output wire stall_o //
 );
@@ -53,13 +53,13 @@ module stage_id (
     wire [6 : 0] opcode = inst_i[6  : 0 ];
     wire [4 : 0] shamt  = inst_i[24 : 20];
 
-    wire [`RegBus] imm_I_type = $signed(inst_i[31:20]);
-    wire [`RegBus] imm_S_type = $signed({inst_i[31:25], inst_i[11:7]});
-    wire [`RegBus] imm_B_type = $signed({inst_i[31], inst_i[7], inst_i[30:25], inst_i[11:8]});
+    wire [`RegBus] imm_I_type = {{20{inst_i[31]}}, inst_i[31:20]};
+    wire [`RegBus] imm_S_type = {{20{inst_i[31]}}, inst_i[31:25], inst_i[11:7]};
+    wire [`RegBus] imm_B_type = {{20{inst_i[31]}}, inst_i[31], inst_i[7], inst_i[30:25], inst_i[11:8], 1'b0};
     wire [`RegBus] imm_U_type = {inst_i[31:12], 12'b000000000000};
-    wire [`RegBus] imm_J_type = $signed({inst_i[31], inst_i[19:12], inst_i[20], inst_i[30:21]});
+    wire [`RegBus] imm_J_type = {{12{inst_i[31]}}, inst_i[31], inst_i[19:12], inst_i[20], inst_i[30:21], 1'b0};
 
-    reg [`RegBus] imm, imm1, imm2;
+    reg [`RegBus] imm;
     // for imm
     always @ (*) begin
         case (opcode) 
@@ -68,7 +68,7 @@ module stage_id (
             `OpcodeJal:     begin imm <= imm_J_type;  rd_write <= `True;  rd_load <= `False; end // jal
             `OpcodeJalr:    begin imm <= imm_I_type;  rd_write <= `True;  rd_load <= `False; end // jalr
             `OpcodeBranch:  begin imm <= imm_B_type;  rd_write <= `False; rd_load <= `False; end // branch
-            `OpcodeLui:     begin imm <= imm_I_type;  rd_write <= `True;  rd_load <= `True;  end // load
+            `OpcodeLoad:    begin imm <= imm_I_type;  rd_write <= `True;  rd_load <= `True;  end // load
             `OpcodeStore:   begin imm <= imm_S_type;  rd_write <= `False; rd_load <= `False; end // store
             `OpcodeOpi:     begin imm <= imm_I_type;  rd_write <= `True;  rd_load <= `False; end // opi
             `OpcodeOp:      begin imm <= 0;           rd_write <= `True;  rd_load <= `False; end // op

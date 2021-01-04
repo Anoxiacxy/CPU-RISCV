@@ -65,66 +65,49 @@ module stage_ex (
 
     reg stall_o1;
     reg stall_o2;
-    assign stall_o = stall_o1 || stall_o2;
+    assign stall_o = `False;
 
     reg [`RegBus] rs1;
     reg [`RegBus] rs2;
 
-    wire [`RegBus] op1 = imm_rs1_sel ? rs1 : imm1;
-    wire [`RegBus] op2 = imm_rs2_sel ? rs2 : imm2;
+    wire [`RegBus] op1 = imm_rs1_sel ? rs1_data : imm1;
+    wire [`RegBus] op2 = imm_rs2_sel ? rs2_data : imm2;
 
-    wire [`InstAddrBus]  branch_if_taken = (branch_addr_change ? rs1 : branch_addr) + branch_offset;
+    wire [`InstAddrBus]  branch_if_taken = branch_addr + branch_offset;
     wire [`InstAddrBus]  branch_if_not_taken = pc_i + 4;
 
     assign mem_addr = op1 + op2;
-    assign mem_data = rs2_data;
+    assign mem_data = rs2;
     
+    assign read_request3 = rs1_request;
+    assign read_request4 = rs2_request;
+    assign read_addr3 = rs1_addr;
+    assign read_addr4 = rs2_addr;
+
     // for rs1, stall_o1
     always @ (*) begin
-        if (!rs1_request || !rs1_addr) begin
-            stall_o1 <= `False;
-            rs1 <= 0;
-        end            
+        stall_o1 = `False;
+        if (!rs1_request || !rs1_addr) rs1 = 0;
         else if (ex_load && (rs1_addr == ex_rd_addr)) begin
-            stall_o1 <= `True;
-            rs1 <= 0;
+            stall_o1 = `True;
+            rs1 = 0;
         end
-        else if (ex_write && (rs1_addr == ex_rd_addr)) begin
-            stall_o1 <= `False;
-            rs1 <= ex_rd_data;
-        end
-        else if (mem_write && (rs1_addr == mem_rd_addr)) begin
-            stall_o1 <= `False;
-            rs1 <= mem_rd_data;
-        end
-        else begin
-            stall_o1 <= `False;
-            rs1 <= rs1_data;
-        end
+        else if (ex_write && (rs1_addr == ex_rd_addr)) rs1 = ex_rd_data;
+        else if (mem_write && (rs1_addr == mem_rd_addr)) rs1 = mem_rd_data;
+        else rs1 = read_data3;
     end
 
      // for rs2_data, stall_o2
     always @ (*) begin
-        if (!rs2_request || !rs2_addr) begin
-            stall_o2 <= `False;
-            rs2 <= 0;
-        end            
-        else if (ex_load && (rs2_addr == ex_rd_addr)) begin
-            stall_o2 <= `True;
-            rs2 <= 0;
+        stall_o2 = `False;
+        if (!rs2_request || !rs2_addr) rs2 = 0;
+        else if ((rs2_addr == ex_rd_addr) && ex_load) begin
+            stall_o2 = `True;
+            rs2 = 0;
         end
-        else if (ex_write && (rs2_addr == ex_rd_addr)) begin
-            stall_o2 <= `False;
-            rs2 <= ex_rd_data;
-        end
-        else if (mem_write && (rs2_addr == mem_rd_addr)) begin
-            stall_o2 <= `False;
-            rs2 <= mem_rd_data;
-        end
-        else begin
-            stall_o2 <= `False;
-            rs2 <= rs2_data;
-        end
+        else if (ex_write && (rs2_addr == ex_rd_addr)) rs2 = ex_rd_data;
+        else if (mem_write && (rs2_addr == mem_rd_addr)) rs2 = mem_rd_data;
+        else rs2 = read_data4;
     end
 
     reg [`RegBus]   result_shift;

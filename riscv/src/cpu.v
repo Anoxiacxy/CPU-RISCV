@@ -58,12 +58,13 @@ module cpu(
     // ctrl_ram
     wire inst_read__cache_i__ctrl_ram;
     wire [`InstAddrBus] inst_addr__cache_i__ctrl_ram;
-    wire [`InstBus]     inst_data__ctrl_ram__cache_i;
+    wire [`RegBus]     inst_data__ctrl_ram__cache_i;
     wire inst_done__ctrl_ram__cache_i;
+    wire inst_wait__ctrl_ram__cache_i;
     wire mem_read__cache_d__ctrl_ram;
     wire mem_write__cache_d__ctrl_ram;
     wire [`InstAddrBus] mem_addr__cache_d__ctrl_ram;
-    wire [`ByteBus]     mem_r_data__ctrl_ram__cache_d;
+    wire [`RegBus]      mem_r_data__ctrl_ram__cache_d;
     wire [`ByteBus]     mem_w_data__cache_d__ctrl_ram;
     wire mem_done__ctrl_ram__cache_d;
     // cache_i
@@ -80,8 +81,6 @@ module cpu(
     wire [`RegBus]      r_data__cache_d__stage_mem;
     wire [`RegBus]      w_data__stage_mem__cache_d;
     wire done__cache_d__stage_mem;
-    wire [`ByteBus]     mem_r_data__ctrl_rem__cache_d;
-    wire [`ByteBus]     mem_w_data__cache_d__ctrl_rem;
     // reg_file
     wire [`RegAddrBus]  write_addr__stage_wb__reg_file;
     wire write_request__stage_wb__reg_file;
@@ -92,9 +91,15 @@ module cpu(
     wire [`RegAddrBus]  read_addr2__stage_id__reg_file;
     wire read_request2__stage_id__reg_file;
     wire [`RegBus]      read_data2__stage_id__reg_file;
+
+    wire [`RegAddrBus]  read_addr3__stage_ex__reg_file;
+    wire read_request3__stage_ex__reg_file;
+    wire [`RegBus]      read_data3__stage_ex__reg_file;
+    wire [`RegAddrBus]  read_addr4__stage_ex__reg_file;
+    wire read_request4__stage_ex__reg_file;
+    wire [`RegBus]      read_data4__stage_ex__reg_file;
     // reg_pc
     wire [`InstAddrBus] branch_npc__stage_ex__reg_pc;
-    wire [`InstAddrBus] pc__ctrl_branch__reg_pc;
     wire [`InstAddrBus] pc__reg_pc_stage_if;
     // stage_if
     wire [`InstBus]     inst__stage_if__reg_if_id;
@@ -172,9 +177,6 @@ module cpu(
     wire [`RegAddrBus]  rd_addr__reg_ex_mem__stage_mem;
     wire rd_write__reg_ex_mem__stage_mem;
     wire [`RegBus]      rd_data__reg_ex_mem__stage_mem;
-    wire [`RegAddrBus]  addr__reg_ex_mem__stage_ex;
-    wire write__reg_ex_mem__stage_ex;
-    wire [`RegBus]      data__reg_ex_mem__stage_ex;
     wire [`MemAddrBus]  mem_addr__reg_ex_mem__stage_mem;
     wire [`RegBus]      mem_data__reg_ex_mem__stage_mem;
     wire [`OpBus]       op__reg_ex_mem__stage_mem;
@@ -188,6 +190,14 @@ module cpu(
     wire rd_write__reg_mem_wb__stage_wb;
     wire [`RegBus]      rd_data__reg_mem_wb__stage_wb;
     // stage_wb
+    
+    wire branch_error;
+    wire error__stage_ex__reg_pc = branch_error;
+    wire error__stage_ex__reg_if_id = branch_error;
+    wire error__stage_ex__reg_id_ex = branch_error;
+    wire error__stage_ex__ctrl_ram = branch_error;
+    wire error__stage_ex__cache_i = branch_error;
+    
     ctrl_stall ctrl_stall_(
         .clk(clk), .rst(rst_in),
         .stall_if(stall__stage_if__ctrl_stall), 
@@ -214,25 +224,46 @@ module cpu(
         .predict_update(predict_update__stage_ex__ctrl_branch)
     );
 
-    ctrl_ram ctrl_ram_(    
+    wire [2 : 0] mem_len__cache_d__ctrl_ram;
+    wire mem_sign__cache_d__ctrl_ram;
+    wire [`RegBus] mem_r_addr__cache_d__ctrl_ram;
+    wire mem_r_done__ctrl_ram__cache_d;
+    wire mem_r_wait__ctrl_ram__cache_d;
+    wire [`MemAddrBus] mem_w_addr__cache_d__ctrl_ram;
+    wire writting__ctrl_ram__cache_d;
+    wire mem_w_wait__ctrl_ram__cache_d;
+    ctrl_ram ctrl_ram_(
+        .clk(clk), .rst(rst_in),    
+        .branch_error(error__stage_ex__ctrl_ram),
+
         .inst_read(inst_read__cache_i__ctrl_ram),
         .inst_addr(inst_addr__cache_i__ctrl_ram),
         .inst_data(inst_data__ctrl_ram__cache_i),
         .inst_done(inst_done__ctrl_ram__cache_i),
+        .inst_wait(inst_wait__ctrl_ram__cache_i),
 
+        .mem_sign(mem_sign__cache_d__ctrl_ram),
+        .mem_len(mem_len__cache_d__ctrl_ram),
         .mem_read(mem_read__cache_d__ctrl_ram),
-        .mem_write(mem_write__cache_d__ctrl_ram),
-        .mem_addr(mem_addr__cache_d__ctrl_ram),
+        .mem_r_addr(mem_r_addr__cache_d__ctrl_ram),
         .mem_r_data(mem_r_data__ctrl_ram__cache_d),
-        .mem_w_data(mem_w_data__cache_d__ctrl_ram),
-        .mem_done(mem_done__ctrl_ram__cache_d),
+        .mem_r_done(mem_r_done__ctrl_ram__cache_d),
+        .mem_r_wait(mem_r_wait__ctrl_ram__cache_d),
 
+        .mem_write(mem_write__cache_d__ctrl_ram),
+        .mem_w_addr(mem_w_addr__cache_d__ctrl_ram),
+        .mem_w_data(mem_w_data__cache_d__ctrl_ram),
+        .writting(writting__ctrl_ram__cache_d),
+        .mem_w_wait(mem_w_wait__ctrl_ram__cache_d),
+
+        .io_buffer_full(io_buffer_full),
         .ram_r_w(mem_wr), .ram_addr(mem_a),
         .ram_w_data(mem_dout), .ram_r_data(mem_din)
     );
 
     cache_i cache_i_(
         .clk(clk), .rst(rst_in), 
+        .branch_error(error__stage_ex__cache_i),
         
         .request_i(request__stage_if__cache_i),
         .addr_i(pc__stage_if__cache_i),
@@ -242,7 +273,8 @@ module cpu(
         .request_o(inst_read__cache_i__ctrl_ram),
         .addr_o(inst_addr__cache_i__ctrl_ram),
         .data_i(inst_data__ctrl_ram__cache_i),
-        .done_i(inst_done__ctrl_ram__cache_i)
+        .done_i(inst_done__ctrl_ram__cache_i),
+        .wait_i(inst_wait__ctrl_ram__cache_i)
     );
 
     cache_d cache_d_(
@@ -253,16 +285,24 @@ module cpu(
         .read_i(read__stage_mem__cache_d),
         .write_i(write__stage_mem__cache_d),
         .addr_i(addr__stage_mem__cache_d),
-        .r_data_o(r_data__cache_d__stage_mem),
-        .w_data_i(w_data__stage_mem__cache_d),
+        .data_o(r_data__cache_d__stage_mem),
+        .data_i(w_data__stage_mem__cache_d),
         .done_o(done__cache_d__stage_mem),
 
         .read_o(mem_read__cache_d__ctrl_ram),
+        .sign_o(mem_sign__cache_d__ctrl_ram),
+        .len_o(mem_len__cache_d__ctrl_ram),
+        .r_addr_o(mem_r_addr__cache_d__ctrl_ram),
+        .r_data_i(mem_r_data__ctrl_ram__cache_d),
+        .r_done_i(mem_r_done__ctrl_ram__cache_d),
+        .r_wait_i(mem_r_wait__ctrl_ram__cache_d),
+
         .write_o(mem_write__cache_d__ctrl_ram),
-        .addr_o(mem_addr__cache_d__ctrl_ram),
-        .r_data_i(mem_r_data__ctrl_rem__cache_d),
-        .w_data_o(mem_w_data__cache_d__ctrl_rem),
-        .done_i(mem_done__ctrl_ram__cache_d)
+        .w_addr_o(mem_w_addr__cache_d__ctrl_ram),
+        .w_data_o(mem_w_data__cache_d__ctrl_ram),
+        .w_wait_i(mem_w_wait__ctrl_ram__cache_d),
+        .writting(writting__ctrl_ram__cache_d)
+        
     );
 
     reg_file reg_file_(
@@ -277,13 +317,18 @@ module cpu(
 
         .r_addr2(read_addr2__stage_id__reg_file),
         .read_request2(read_request2__stage_id__reg_file),
-        .r_data2(read_data2__stage_id__reg_file)
+        .r_data2(read_data2__stage_id__reg_file),
+
+        .r_addr3(read_addr3__stage_ex__reg_file),
+        .read_request3(read_request3__stage_ex__reg_file),
+        .r_data3(read_data3__stage_ex__reg_file),
+
+        .r_addr4(read_addr4__stage_ex__reg_file),
+        .read_request4(read_request4__stage_ex__reg_file),
+        .r_data4(read_data4__stage_ex__reg_file)
     );
 
-    wire branch_error;
-    wire error__stage_ex__reg_pc = branch_error;
-    wire error__stage_ex__reg_if_id = branch_error;
-    wire error__stage_ex__reg_id_ex = branch_error;
+    
 
     reg_pc reg_pc_(
         .clk(clk), .rst(rst_in), 
@@ -296,6 +341,7 @@ module cpu(
     );
 
     stage_if stage_if_(
+        .rst(rst_in),
         .pc_i(pc__reg_pc_stage_if),
         .ram_request(request__stage_if__cache_i),
         .ram_done(done__cache_i__stage_if),
@@ -441,6 +487,14 @@ module cpu(
         .rs2_addr(rs2_addr__reg_id_ex__stage_ex),
         .imm2(imm2__reg_id_ex__stage_ex),
         .imm_rs2_sel(imm_rs2_sel__reg_id_ex__stage_ex),
+
+        .read_request3(read_request3__stage_ex__reg_file),
+        .read_addr3(read_addr3__stage_ex__reg_file),
+        .read_data3(read_data3__stage_ex__reg_file),
+
+        .read_request4(read_request4__stage_ex__reg_file),
+        .read_addr4(read_addr4__stage_ex__reg_file),
+        .read_data4(read_data4__stage_ex__reg_file),
 
         .ex_load(load__reg_ex_mem__stage_ex),
         .ex_write(write__reg_ex_mem__stage_ex),

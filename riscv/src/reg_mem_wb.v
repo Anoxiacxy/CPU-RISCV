@@ -20,16 +20,16 @@ module reg_mem_wb(
             rd_addr_o1 <= 0;
             rd_data_o1 <= 0;
             rd_write_o1 <= 0;
-            rd_addr_o1 <= 0;
-            rd_data_o1 <= 0;
-            rd_write_o1 <= 0;
+            rd_addr_o2 <= 0;
+            rd_data_o2 <= 0;
+            rd_write_o2 <= 0;
         end else if (stall == `Pass) begin
             rd_addr_o1 <= rd_addr_i;
             rd_data_o1 <= rd_data_i;
             rd_write_o1 <= rd_write_i;
-            rd_addr_o1 <= rd_addr_i;
-            rd_data_o1 <= rd_data_i;
-            rd_write_o1 <= rd_write_i;
+            rd_addr_o2 <= rd_addr_i;
+            rd_data_o2 <= rd_data_i;
+            rd_write_o2 <= rd_write_i;
         end else if (stall == `Hold) begin
             
         end
