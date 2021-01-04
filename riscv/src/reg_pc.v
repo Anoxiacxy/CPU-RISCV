@@ -16,7 +16,7 @@ module reg_pc (
         end else if (branch_error) begin
             pc_o <= branch_npc;
         end else if (stall == `Pass) begin 
-                pc_o <= pc_i;
+            pc_o <= pc_i;
         end else if (stall == `Hold) begin
             
         end

@@ -4,24 +4,14 @@ module stage_ex (
     input wire [`InstAddrBus]   pc_i,
 
     input wire [`RegBus]        rs1_data,
-    input wire                  rs1_request,
     input wire [`RegAddrBus]    rs1_addr,
     input wire [`RegBus]        imm1,
     input wire imm_rs1_sel,
 
     input wire [`RegBus]        rs2_data,
-    input wire                  rs2_request,
     input wire [`RegAddrBus]    rs2_addr,
     input wire [`RegBus]        imm2,
     input wire imm_rs2_sel,
-
-    input wire ex_load,
-    input wire ex_write,
-    input wire [`RegAddrBus]     ex_rd_addr,
-    input wire [`RegBus]         ex_rd_data,
-    input wire mem_write,
-    input wire [`RegAddrBus]     mem_rd_addr,
-    input wire [`RegBus]         mem_rd_data,
 
     input wire [`RegAddrBus]    rd_addr_i,
     input wire                  rd_write_i,
@@ -63,8 +53,6 @@ module stage_ex (
     assign rd_write_o   = rd_write_i;
     assign rd_load_o    = rd_load_i;
 
-    reg stall_o1;
-    reg stall_o2;
     assign stall_o = `False;
 
     reg [`RegBus] rs1;
@@ -78,37 +66,6 @@ module stage_ex (
 
     assign mem_addr = op1 + op2;
     assign mem_data = rs2;
-    
-    assign read_request3 = rs1_request;
-    assign read_request4 = rs2_request;
-    assign read_addr3 = rs1_addr;
-    assign read_addr4 = rs2_addr;
-
-    // for rs1, stall_o1
-    always @ (*) begin
-        stall_o1 = `False;
-        if (!rs1_request || !rs1_addr) rs1 = 0;
-        else if (ex_load && (rs1_addr == ex_rd_addr)) begin
-            stall_o1 = `True;
-            rs1 = 0;
-        end
-        else if (ex_write && (rs1_addr == ex_rd_addr)) rs1 = ex_rd_data;
-        else if (mem_write && (rs1_addr == mem_rd_addr)) rs1 = mem_rd_data;
-        else rs1 = read_data3;
-    end
-
-     // for rs2_data, stall_o2
-    always @ (*) begin
-        stall_o2 = `False;
-        if (!rs2_request || !rs2_addr) rs2 = 0;
-        else if ((rs2_addr == ex_rd_addr) && ex_load) begin
-            stall_o2 = `True;
-            rs2 = 0;
-        end
-        else if (ex_write && (rs2_addr == ex_rd_addr)) rs2 = ex_rd_data;
-        else if (mem_write && (rs2_addr == mem_rd_addr)) rs2 = mem_rd_data;
-        else rs2 = read_data4;
-    end
 
     reg [`RegBus]   result_shift;
     reg [`RegBus]   result_arith;

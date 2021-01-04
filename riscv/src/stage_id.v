@@ -14,14 +14,10 @@ module stage_id (
     input wire [`RegBus]        read_data2, 
 
     output wire [`RegBus]        rs1_data, //
-    output wire                  rs1_request, //
-    output wire [`RegAddrBus]    rs1_addr, //
     output reg [`RegBus]        imm1, //
     output reg imm_rs1_sel, //
 
     output wire [`RegBus]        rs2_data, //
-    output wire                  rs2_request, //
-    output wire [`RegAddrBus]    rs2_addr, //
     output reg [`RegBus]        imm2, //
     output reg imm_rs2_sel, //
 
@@ -35,13 +31,21 @@ module stage_id (
     output reg branch, //
     output reg jump, //
     output reg [`InstAddrBus]   branch_addr, //
-    output reg                  branch_addr_change, //
     output reg [`InstAddrBus]   branch_offset, //   
 
     input wire predict_result_i,
     input wire [`InstAddrBus]   npc_i,
     output wire predict_result_o, //
     output wire [`InstAddrBus]  npc_o,
+
+    input wire ex_load,
+    input wire ex_write,
+    input wire [`RegAddrBus]    ex_rd_addr,
+    input wire [`RegBus]        ex_rd_data,
+
+    input wire mem_write,
+    input wire [`RegAddrBus]    mem_rd_addr,
+    input wire [`RegBus]        mem_rd_data,
 
     output wire stall_o //
 );
@@ -108,15 +112,27 @@ module stage_id (
     assign pc_o = pc_i;
 
     assign rd_addr = inst_i[11 : 7];
-    assign rs1_addr = inst_i[19 : 15];
-    assign rs2_addr = inst_i[24 : 20];
 
-    assign read_addr1 = rs1_addr;
-    assign read_addr2 = rs2_addr;
+    assign read_addr1 = inst_i[19 : 15];
+    assign read_addr2 = inst_i[24 : 20];
     
-    assign stall_o = `False;
+    reg rs1_stall, rs2_stall;
+    assign stall_o = rs1_stall | rs2_stall;
+    
+    always @ (*) begin
+        if (!rs1_request || !read_addr1) begin
+            rs1_data <= 0; rs1_stall <= `False;
+        end else if (ex_load && (read_addr1 == ex_rd_addr)) begin
+            rs1_data <= 0; rs1_stall <=``True;
+        end else if (ex_write) begin
+            rs1_data <= ex_
+        end
+    end
 
     assign rs1_data = (rs1_request && rs1_addr) ? read_data1 : 0;
+
+
+
     assign rs2_data = (rs2_request && rs2_addr) ? read_data2 : 0;
 
     // for read_request1, read_request2

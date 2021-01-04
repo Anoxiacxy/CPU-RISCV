@@ -328,8 +328,6 @@ module cpu(
         .r_data4(read_data4__stage_ex__reg_file)
     );
 
-    
-
     reg_pc reg_pc_(
         .clk(clk), .rst(rst_in), 
         .stall(stall__ctrl_stall__reg_pc),

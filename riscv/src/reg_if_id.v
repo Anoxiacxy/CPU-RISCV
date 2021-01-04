@@ -15,7 +15,7 @@ module reg_if_id (
     output reg [`InstAddrBus]   next_pc_o
 );
 
-    always @ (posedge clk or posedge rst) begin
+    always @ (posedge clk) begin
         if (rst || stall == `Bubb || branch_error) begin
             pc_o        <= 0;
             inst_o      <= 0;

@@ -22,10 +22,6 @@ module ctrl_branch(
     reg                         btb_valid   [`BtbNum - 1 : 0];
     
     integer i;
-    initial begin    
-        for (i = 0; i < `BhtNum; i = i + 1)  bht[i] <= 2'b01;
-        for (i = 0; i < `BtbNum; i = i + 1)  btb_valid[i] <= 0;
-    end
     
     wire [`BhtIndex]    bht_index_i = pc_i[`BhtIndex];
     wire [`BtbIndex]    btb_index_i = pc_i[`BtbIndex];
@@ -51,7 +47,7 @@ module ctrl_branch(
     wire [`BtbIndex]    btb_index_b = branch_pc[`BtbIndex];
     wire [`BtbTag]      btb_tag_b   = branch_pc[`BtbTag];
 
-    always @ (posedge clk or posedge rst) begin
+    always @ (posedge clk) begin
         if (rst) begin
             for (i = 0; i < `BhtNum; i = i + 1)  bht[i] <= 2'b01;
         end else if (predict_update) begin
@@ -62,7 +58,7 @@ module ctrl_branch(
         end 
     end
 
-    always @ (posedge clk or posedge rst) begin
+    always @ (posedge clk) begin
         if (rst) begin
             for (i = 0; i < `BtbNum; i = i + 1)  btb_valid[i] <= 0;
         end else if (predict_update) begin
