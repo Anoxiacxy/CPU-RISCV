@@ -47,12 +47,12 @@ module cpu(
     wire [`StallBus] stall__ctrl_stall__reg_ex_mem;
     wire [`StallBus] stall__ctrl_stall__reg_mem_wb;
     // ctrl_branch
-    wire [`InstAddrBus] pc__stage_if__ctrl_branch;
+    wire [`InstAddrBus] branch_npc__stage_ex_o;
     wire [`InstAddrBus] pc__ctrl_branch__reg_pc;
     wire [`InstAddrBus] npc__ctrl_branch__reg_if_id;
     wire predict_result__ctrl_branch__reg_if_id;
     wire [`InstAddrBus] branch_pc__stage_ex__ctrl_branch;
-    wire [`InstAddrBus] branch_npc__stage_ex__ctrl_branch;
+    wire [`InstAddrBus] branch_npc__stage_ex__ctrl_branch = branch_npc__stage_ex_o;
     wire actual_result__stage_ex__ctrl_branch;
     wire predict_update__stage_ex__ctrl_branch;
     // ctrl_ram
@@ -69,7 +69,6 @@ module cpu(
     wire mem_done__ctrl_ram__cache_d;
     // cache_i
     wire request__stage_if__cache_i;
-    wire [`InstAddrBus] pc__stage_if__cache_i;
     wire [`InstBus]     inst__cache_i__stage_if;
     wire done__cache_i__stage_if;
     // cache_d
@@ -85,21 +84,16 @@ module cpu(
     wire [`RegAddrBus]  write_addr__stage_wb__reg_file;
     wire write_request__stage_wb__reg_file;
     wire [`RegBus]      write_data__stage_wb__reg_file;
+    
     wire [`RegAddrBus]  read_addr1__stage_id__reg_file;
     wire read_request1__stage_id__reg_file;
     wire [`RegBus]      read_data1__stage_id__reg_file;
+    
     wire [`RegAddrBus]  read_addr2__stage_id__reg_file;
     wire read_request2__stage_id__reg_file;
     wire [`RegBus]      read_data2__stage_id__reg_file;
-
-    wire [`RegAddrBus]  read_addr3__stage_ex__reg_file;
-    wire read_request3__stage_ex__reg_file;
-    wire [`RegBus]      read_data3__stage_ex__reg_file;
-    wire [`RegAddrBus]  read_addr4__stage_ex__reg_file;
-    wire read_request4__stage_ex__reg_file;
-    wire [`RegBus]      read_data4__stage_ex__reg_file;
     // reg_pc
-    wire [`InstAddrBus] branch_npc__stage_ex__reg_pc;
+    wire [`InstAddrBus] branch_npc__stage_ex__reg_pc = branch_npc__stage_ex_o;
     wire [`InstAddrBus] pc__reg_pc_stage_if;
     // stage_if
     wire [`InstBus]     inst__stage_if__reg_if_id;
@@ -211,7 +205,8 @@ module cpu(
         .stall_mem_wb(stall__ctrl_stall__reg_mem_wb)
     );
 
-
+    wire [`InstAddrBus] pc__stage_if__ctrl_branch = pc__stage_if__reg_if_id;
+    
     ctrl_branch ctrl_branch_(
         .clk(clk), .rst(rst_in),
         .pc_i(pc__stage_if__ctrl_branch),
@@ -232,6 +227,7 @@ module cpu(
     wire [`MemAddrBus] mem_w_addr__cache_d__ctrl_ram;
     wire writting__ctrl_ram__cache_d;
     wire mem_w_wait__ctrl_ram__cache_d;
+    
     ctrl_ram ctrl_ram_(
         .clk(clk), .rst(rst_in),    
         .branch_error(error__stage_ex__ctrl_ram),
@@ -260,6 +256,8 @@ module cpu(
         .ram_r_w(mem_wr), .ram_addr(mem_a),
         .ram_w_data(mem_dout), .ram_r_data(mem_din)
     );
+
+    wire [`InstAddrBus] pc__stage_if__cache_i = pc__stage_if__reg_if_id;
 
     cache_i cache_i_(
         .clk(clk), .rst(rst_in), 
@@ -317,15 +315,7 @@ module cpu(
 
         .r_addr2(read_addr2__stage_id__reg_file),
         .read_request2(read_request2__stage_id__reg_file),
-        .r_data2(read_data2__stage_id__reg_file),
-
-        .r_addr3(read_addr3__stage_ex__reg_file),
-        .read_request3(read_request3__stage_ex__reg_file),
-        .r_data3(read_data3__stage_ex__reg_file),
-
-        .r_addr4(read_addr4__stage_ex__reg_file),
-        .read_request4(read_request4__stage_ex__reg_file),
-        .r_data4(read_data4__stage_ex__reg_file)
+        .r_data2(read_data2__stage_id__reg_file)
     );
 
     reg_pc reg_pc_(
@@ -337,17 +327,17 @@ module cpu(
         .pc_i(pc__ctrl_branch__reg_pc),
         .pc_o(pc__reg_pc_stage_if)
     );
-
+        
     stage_if stage_if_(
         .rst(rst_in),
         .pc_i(pc__reg_pc_stage_if),
         .ram_request(request__stage_if__cache_i),
         .ram_done(done__cache_i__stage_if),
+        
         .inst_i(inst__cache_i__stage_if),
         .inst_o(inst__stage_if__reg_if_id),
-        .pc_o1(pc__stage_if__reg_if_id),
-        .pc_o2(pc__stage_if__cache_i),
-        .pc_o3(pc__stage_if__ctrl_branch),
+        .pc_o(pc__stage_if__reg_if_id),
+        
         .stall_o(stall__stage_if__ctrl_stall)
     );
 
@@ -366,7 +356,16 @@ module cpu(
         .predict_result_o(predict_result__reg_if_id__stage_id),
         .next_pc_o(npc__reg_if_id__stage_id)
     );
-
+    
+    wire [`RegAddrBus] addr__stage_ex__stage_id = rd_addr__stage_ex__reg_ex_mem;
+    wire write__stage_ex__stage_id = rd_write__stage_ex__reg_ex_mem;
+    wire load__stage_ex__stage_id = rd_load__stage_ex__reg_ex_mem;
+    wire [`RegBus] data__stage_ex__stage_id = rd_data__stage_ex__reg_ex_mem;
+    
+    wire [`RegAddrBus] addr__stage_mem__stage_id = rd_addr__stage_mem__reg_mem_wb;
+    wire write__stage_mem__stage_id = rd_write__stage_mem__reg_mem_wb;
+    wire [`RegBus] data__stage_mem__stage_id = rd_data__stage_mem__reg_mem_wb;
+    
     stage_id stage_id_(
         .pc_i(pc__reg_if_id__stage_id),
         .inst_i(inst__reg_if_id__stage_id),
@@ -380,16 +379,20 @@ module cpu(
         .read_addr2(read_addr2__stage_id__reg_file),
         .read_data2(read_data2__stage_id__reg_file),
 
+        .ex_load(load__stage_ex__stage_id),
+        .ex_write(write__stage_ex__stage_id),
+        .ex_rd_addr(addr__stage_ex__stage_id),
+        .ex_rd_data(data__stage_ex__stage_id),
+        .mem_write(write__stage_mem__stage_id),
+        .mem_rd_addr(addr__stage_mem__stage_id),
+        .mem_rd_data(data__stage_mem__stage_id),
+
         .rs1_data(rs1_data__stage_id__reg_id_ex),
-        .rs1_request(rs1_request__stage_id__reg_id_ex),
-        .rs1_addr(rs1_addr__stage_id__reg_id_ex),
         .imm1(imm1__stage_id__reg_id_ex),
         .imm_rs1_sel(imm_rs1_sel__stage_id__reg_id_ex),
 
         .rs2_data(rs2_data__stage_id__reg_id_ex),
         .imm2(imm2__stage_id__reg_id_ex),
-        .rs2_request(rs2_request__stage_id__reg_id_ex),
-        .rs2_addr(rs2_addr__stage_id__reg_id_ex),
         .imm_rs2_sel(imm_rs2_sel__stage_id__reg_id_ex),
 
         .rd_addr(rd_addr__stage_id__reg_id_ex),
@@ -402,7 +405,6 @@ module cpu(
         .branch(branch__stage_id__reg_id_ex),
         .jump(jump__stage_id__reg_id_ex),
         .branch_addr(branch_addr__stage_id__reg_id_ex),
-        .branch_addr_change(branch_addr_change__stage_id__reg_id_ex),
         .branch_offset(branch_offset__stage_id__reg_id_ex),
 
         .predict_result_i(predict_result__reg_if_id__stage_id),
@@ -417,27 +419,22 @@ module cpu(
         .clk(clk), .rst(rst_in),    
         .stall(stall__ctrl_stall__reg_id_ex),
         .branch_error(error__stage_ex__reg_id_ex),
+        
         .pc_i(pc__stage_id__reg_id_ex),
         .pc_o(pc__reg_id_ex__stage_ex),
+        
         .rs1_data_i(rs1_data__stage_id__reg_id_ex),
-        .rs1_request_i(rs1_request__stage_id__reg_id_ex),
-        .rs1_addr_i(rs1_addr__stage_id__reg_id_ex),
         .imm1_i(imm1__stage_id__reg_id_ex),
         .imm_rs1_sel_i(imm_rs1_sel__stage_id__reg_id_ex),
+        
         .rs2_data_i(rs2_data__stage_id__reg_id_ex),
-        .rs2_request_i(rs2_request__stage_id__reg_id_ex),
-        .rs2_addr_i(rs2_addr__stage_id__reg_id_ex),
         .imm2_i(imm2__stage_id__reg_id_ex),
         .imm_rs2_sel_i(imm_rs2_sel__stage_id__reg_id_ex),
 
         .rs1_data_o(rs1_data__reg_id_ex__stage_ex),
-        .rs1_request_o(rs1_request__reg_id_ex__stage_ex),
-        .rs1_addr_o(rs1_addr__reg_id_ex__stage_ex),
         .imm1_o(imm1__reg_id_ex__stage_ex),
         .imm_rs1_sel_o(imm_rs1_sel__reg_id_ex__stage_ex),
         .rs2_data_o(rs2_data__reg_id_ex__stage_ex),
-        .rs2_request_o(rs2_request__reg_id_ex__stage_ex),
-        .rs2_addr_o(rs2_addr__reg_id_ex__stage_ex),
         .imm2_o(imm2__reg_id_ex__stage_ex),
         .imm_rs2_sel_o(imm_rs2_sel__reg_id_ex__stage_ex),
 
@@ -457,13 +454,11 @@ module cpu(
         .branch_i(branch__stage_id__reg_id_ex),
         .jump_i(jump__stage_id__reg_id_ex),
         .branch_addr_i(branch_addr__stage_id__reg_id_ex),
-        .branch_addr_change_i(branch_addr_change__stage_id__reg_id_ex),
         .branch_offset_i(branch_offset__stage_id__reg_id_ex),
 
         .branch_o(branch__reg_id_ex__stage_ex),
         .jump_o(jump__reg_id_ex__stage_ex),
         .branch_addr_o(branch_addr__reg_id_ex__stage_ex),
-        .branch_addr_change_o(branch_addr_change__reg_id_ex__stage_ex),
         .branch_offset_o(branch_offset__reg_id_ex__stage_ex),
 
         .predict_result_i(predict_result__stage_id__reg_id_ex),
@@ -475,53 +470,33 @@ module cpu(
     stage_ex stage_ex_(
         .pc_i(pc__reg_id_ex__stage_ex),
         .rs1_data(rs1_data__reg_id_ex__stage_ex),
-        .rs1_request(rs1_request__reg_id_ex__stage_ex),
-        .rs1_addr(rs1_addr__reg_id_ex__stage_ex),
         .imm1(imm1__reg_id_ex__stage_ex),
         .imm_rs1_sel(imm_rs1_sel__reg_id_ex__stage_ex),
 
         .rs2_data(rs2_data__reg_id_ex__stage_ex),
-        .rs2_request(rs2_request__reg_id_ex__stage_ex),
-        .rs2_addr(rs2_addr__reg_id_ex__stage_ex),
         .imm2(imm2__reg_id_ex__stage_ex),
         .imm_rs2_sel(imm_rs2_sel__reg_id_ex__stage_ex),
-
-        .read_request3(read_request3__stage_ex__reg_file),
-        .read_addr3(read_addr3__stage_ex__reg_file),
-        .read_data3(read_data3__stage_ex__reg_file),
-
-        .read_request4(read_request4__stage_ex__reg_file),
-        .read_addr4(read_addr4__stage_ex__reg_file),
-        .read_data4(read_data4__stage_ex__reg_file),
-
-        .ex_load(load__reg_ex_mem__stage_ex),
-        .ex_write(write__reg_ex_mem__stage_ex),
-        .ex_rd_addr(addr__reg_ex_mem__stage_ex),
-        .ex_rd_data(data__reg_ex_mem__stage_ex),
-        .mem_write(write__reg_mem_wb__stage_ex),
-        .mem_rd_addr(addr__reg_mem_wb__stage_ex),
-        .mem_rd_data(data__reg_mem_wb__stage_ex),
 
         .rd_addr_i(rd_addr__reg_id_ex__stage_ex),
         .rd_write_i(rd_write__reg_id_ex__stage_ex),
         .rd_load_i(rd_load__reg_id_ex__stage_ex),
+        
         .rd_addr_o(rd_addr__stage_ex__reg_ex_mem),
         .rd_write_o(rd_write__stage_ex__reg_ex_mem),
         .rd_load_o(rd_load__stage_ex__reg_ex_mem),
         .rd_data(rd_data__stage_ex__reg_ex_mem),
 
-        .mem_addr(mem_addr__stage_ex__reg_ex_mem),
-        .mem_data(mem_data__stage_ex__reg_ex_mem),
-
         .op_i(op__reg_id_ex__stage_ex),
         .catagory_i(catagory__reg_id_ex__stage_ex),
         .op_o(op__stage_ex__reg_ex_mem),
         .catagory_o(catagory__stage_ex__reg_ex_mem),
+        
+        .mem_addr(mem_addr__stage_ex__reg_ex_mem),
+        .mem_data(mem_data__stage_ex__reg_ex_mem),
 
         .branch(branch__reg_id_ex__stage_ex),
         .jump(jump__reg_id_ex__stage_ex),
         .branch_addr(branch_addr__reg_id_ex__stage_ex),
-        .branch_addr_change(branch_addr_change__reg_id_ex__stage_ex),
         .branch_offset(branch_offset__reg_id_ex__stage_ex),
 
         .npc(npc__reg_id_ex__stage_ex),
@@ -529,8 +504,7 @@ module cpu(
         .predict_error(branch_error),
         .predict_update(predict_update__stage_ex__ctrl_branch),
         .actual_result(actual_result__stage_ex__ctrl_branch),
-        .branch_npc1(branch_npc__stage_ex__ctrl_branch),
-        .branch_npc2(branch_npc__stage_ex__reg_pc),
+        .branch_npc(branch_npc__stage_ex_o),
         .branch_pc(branch_pc__stage_ex__ctrl_branch),
 
         .stall_o(stall__stage_ex__ctrl_stall)
@@ -547,13 +521,9 @@ module cpu(
         .rd_data_i(rd_data__stage_ex__reg_ex_mem),
 
         .rd_load_o(load__reg_ex_mem__stage_ex),
-
-        .rd_addr_o1(rd_addr__reg_ex_mem__stage_mem),
-        .rd_write_o1(rd_write__reg_ex_mem__stage_mem),
-        .rd_data_o1(rd_data__reg_ex_mem__stage_mem),
-        .rd_addr_o2(addr__reg_ex_mem__stage_ex),
-        .rd_write_o2(write__reg_ex_mem__stage_ex),
-        .rd_data_o2(data__reg_ex_mem__stage_ex),
+        .rd_addr_o(rd_addr__reg_ex_mem__stage_mem),
+        .rd_write_o(rd_write__reg_ex_mem__stage_mem),
+        .rd_data_o(rd_data__reg_ex_mem__stage_mem),
 
         .mem_addr_i(mem_addr__stage_ex__reg_ex_mem),
         .mem_data_i(mem_data__stage_ex__reg_ex_mem),
@@ -599,12 +569,9 @@ module cpu(
         .rd_write_i(rd_write__stage_mem__reg_mem_wb),
         .rd_data_i(rd_data__stage_mem__reg_mem_wb),
 
-        .rd_addr_o1(rd_addr__reg_mem_wb__stage_wb),
-        .rd_write_o1(rd_write__reg_mem_wb__stage_wb),
-        .rd_data_o1(rd_data__reg_mem_wb__stage_wb),
-        .rd_addr_o2(addr__reg_mem_wb__stage_ex),
-        .rd_write_o2(write__reg_mem_wb__stage_ex),
-        .rd_data_o2(data__reg_mem_wb__stage_ex)
+        .rd_addr_o(rd_addr__reg_mem_wb__stage_wb),
+        .rd_write_o(rd_write__reg_mem_wb__stage_wb),
+        .rd_data_o(rd_data__reg_mem_wb__stage_wb)
     ); 
 
     stage_wb stage_wb_(

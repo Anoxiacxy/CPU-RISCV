@@ -8,9 +8,9 @@ rpath=$prefix/bin/
 # compiling rom
 ${rpath}riscv32-unknown-elf-as -o ./sys/rom.o -march=rv32i ./sys/rom.s
 # compiling testcase
-cp ./testcase/apb.c ./test/test.c
-# ${rpath}riscv32-unknown-elf-gcc -o ./test/test.o -I ./sys -c ./test/test.c -O2 -march=rv32i -mabi=ilp32 -Wall
-${rpath}riscv32-unknown-elf-gcc -o ./test/test.o -I ./sys -c ./test/test.c -march=rv32i -mabi=ilp32 -Wall
+cp ./testcase/${1%.*}.c ./test/test.c
+${rpath}riscv32-unknown-elf-gcc -o ./test/test.o -I ./sys -c ./test/test.c -O2 -march=rv32i -mabi=ilp32 -Wall
+# ${rpath}riscv32-unknown-elf-gcc -o ./test/test.o -I ./sys -c ./test/test.c -march=rv32i -mabi=ilp32 -Wall
 # linking
 ${rpath}riscv32-unknown-elf-ld -T ./sys/memory.ld ./sys/rom.o ./test/test.o -L $prefix/riscv32-unknown-elf/lib/ -L $prefix/lib/gcc/riscv32-unknown-elf/10.2.0/ -lc -lgcc -lm -lnosys -o ./test/test.om
 # converting to verilog format

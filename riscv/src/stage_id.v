@@ -12,12 +12,20 @@ module stage_id (
     output reg read_request2, //
     output wire [`RegAddrBus]    read_addr2, //
     input wire [`RegBus]        read_data2, 
+    
+    input wire ex_load,
+    input wire ex_write,
+    input wire [`RegAddrBus]    ex_rd_addr,
+    input wire [`RegBus]        ex_rd_data,
+    input wire mem_write,
+    input wire [`RegAddrBus]    mem_rd_addr,
+    input wire [`RegBus]        mem_rd_data,
 
-    output wire [`RegBus]        rs1_data, //
+    output reg [`RegBus]        rs1_data, //
     output reg [`RegBus]        imm1, //
     output reg imm_rs1_sel, //
 
-    output wire [`RegBus]        rs2_data, //
+    output reg [`RegBus]        rs2_data, //
     output reg [`RegBus]        imm2, //
     output reg imm_rs2_sel, //
 
@@ -37,15 +45,6 @@ module stage_id (
     input wire [`InstAddrBus]   npc_i,
     output wire predict_result_o, //
     output wire [`InstAddrBus]  npc_o,
-
-    input wire ex_load,
-    input wire ex_write,
-    input wire [`RegAddrBus]    ex_rd_addr,
-    input wire [`RegBus]        ex_rd_data,
-
-    input wire mem_write,
-    input wire [`RegAddrBus]    mem_rd_addr,
-    input wire [`RegBus]        mem_rd_data,
 
     output wire stall_o //
 );
@@ -84,25 +83,21 @@ module stage_id (
     always @ (*) begin
         if (opcode == `OpcodeJal) begin
             branch_addr <= pc_i;
-            branch_addr_change = `False;
             branch_offset <= imm;
             jump <= `True;
             branch <= `False;
         end else if (opcode == `OpcodeJalr) begin
             branch_addr <= rs1_data;
-            branch_addr_change = `True;
             branch_offset <= imm;
             jump <= `True;
             branch <= `True;
         end else if (opcode == `OpcodeBranch) begin
             branch_addr <= pc_i;
-            branch_addr_change = `False;
             branch_offset <= imm;
             jump <= `False;
             branch <= `True;
         end else begin
             branch_addr <= 0;
-            branch_addr_change = `False;
             branch_offset <= 0;
             jump <= `False;
             branch <= `False;
@@ -123,18 +118,29 @@ module stage_id (
         if (!rs1_request || !read_addr1) begin
             rs1_data <= 0; rs1_stall <= `False;
         end else if (ex_load && (read_addr1 == ex_rd_addr)) begin
-            rs1_data <= 0; rs1_stall <=``True;
-        end else if (ex_write) begin
-            rs1_data <= ex_
+            rs1_data <= 0; rs1_stall <= `True;
+        end else if (ex_write && (read_addr1 == ex_rd_addr)) begin
+            rs1_data <= ex_rd_data; rs1_stall <= `False;
+        end else if (mem_write && (read_addr1 == mem_rd_addr)) begin
+            rs1_data <= mem_rd_data; rs1_stall <= `False;
+        end else begin
+            rs1_data <=  read_data1; rs1_stall <= `False;
         end
     end
 
-    assign rs1_data = (rs1_request && rs1_addr) ? read_data1 : 0;
-
-
-
-    assign rs2_data = (rs2_request && rs2_addr) ? read_data2 : 0;
-
+    always @ (*) begin
+        if (!rs2_request || !read_addr2) begin
+            rs2_data <= 0; rs2_stall <= `False;
+        end else if (ex_load && (read_addr2 == ex_rd_addr)) begin
+            rs2_data <= 0; rs2_stall <= `True;
+        end else if (ex_write && (read_addr2 == ex_rd_addr)) begin
+            rs2_data <= ex_rd_data; rs2_stall <= `False;
+        end else if (mem_write && (read_addr2 == mem_rd_addr)) begin
+            rs2_data <= mem_rd_data; rs2_stall <= `False;
+        end else begin
+            rs2_data <=  read_data2; rs2_stall <= `False;
+        end
+    end
     // for read_request1, read_request2
     always @ (*) begin
         if (opcode == 7'b0110111 || opcode == 7'b0010111 || opcode == 7'b1101111) begin

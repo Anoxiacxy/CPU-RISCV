@@ -4,21 +4,21 @@ module stage_ex (
     input wire [`InstAddrBus]   pc_i,
 
     input wire [`RegBus]        rs1_data,
-    input wire [`RegAddrBus]    rs1_addr,
     input wire [`RegBus]        imm1,
     input wire imm_rs1_sel,
 
     input wire [`RegBus]        rs2_data,
-    input wire [`RegAddrBus]    rs2_addr,
     input wire [`RegBus]        imm2,
     input wire imm_rs2_sel,
 
     input wire [`RegAddrBus]    rd_addr_i,
     input wire                  rd_write_i,
     input wire                  rd_load_i,
+    
     output wire [`RegAddrBus]    rd_addr_o, //
     output wire                  rd_write_o, //
     output wire                  rd_load_o, //
+    
     output reg [`RegBus]        rd_data, //
 
     input wire [`OpBus]         op_i,
@@ -32,7 +32,6 @@ module stage_ex (
     input wire branch,
     input wire jump,
     input wire [`InstAddrBus]   branch_addr,
-    input wire                  branch_addr_change,
     input wire [`InstAddrBus]   branch_offset,
 
     input wire [`InstAddrBus]    npc,
@@ -40,8 +39,7 @@ module stage_ex (
     output wire                  predict_error, //
     output wire                  predict_update, //
     output wire                  actual_result, //
-    output wire [`InstAddrBus]   branch_npc1, //
-    output wire [`InstAddrBus]   branch_npc2, //
+    output wire [`InstAddrBus]   branch_npc, //
     output wire [`InstAddrBus]   branch_pc, //
     output wire                  stall_o
 );
@@ -55,9 +53,6 @@ module stage_ex (
 
     assign stall_o = `False;
 
-    reg [`RegBus] rs1;
-    reg [`RegBus] rs2;
-
     wire [`RegBus] op1 = imm_rs1_sel ? rs1_data : imm1;
     wire [`RegBus] op2 = imm_rs2_sel ? rs2_data : imm2;
 
@@ -65,7 +60,7 @@ module stage_ex (
     wire [`InstAddrBus]  branch_if_not_taken = pc_i + 4;
 
     assign mem_addr = op1 + op2;
-    assign mem_data = rs2;
+    assign mem_data = rs2_data;
 
     reg [`RegBus]   result_shift;
     reg [`RegBus]   result_arith;
@@ -74,11 +69,10 @@ module stage_ex (
     reg             result_branch;
 
     assign actual_result    = result_branch || jump;
-    assign branch_npc1      = actual_result ? branch_if_taken : branch_if_not_taken;
-    assign branch_npc2      = branch_npc1;
+    assign branch_npc       = actual_result ? branch_if_taken : branch_if_not_taken;
     assign predict_error    = ((branch || jump) && (
             predict_result != actual_result ||
-            npc != branch_npc1)) 
+            npc != branch_npc)) 
         || (branch && jump);
     assign predict_update   = (branch ^ jump);
 

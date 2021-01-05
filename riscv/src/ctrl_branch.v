@@ -6,7 +6,7 @@ module ctrl_branch(
 
     input wire [`InstAddrBus]   pc_i,
     output reg [`InstAddrBus]   pc_o1,
-    output wire [`InstAddrBus]   pc_o2,
+    output wire [`InstAddrBus]  pc_o2,
     output reg                  predict_result,
 
     input wire [`InstAddrBus]   branch_pc,

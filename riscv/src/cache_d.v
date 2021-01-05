@@ -2,13 +2,13 @@
 module cache_d(
     input wire clk,
     input wire rst,
-    // sage_mem
+    // stage_mem
     input wire                  sign_i,
     input wire [1 : 0]          len_i,
     input wire                  read_i,
     input wire                  write_i,
     input wire [`MemAddrBus]    addr_i,
-    output reg [`RegBus]        data_o,
+    output reg  [`RegBus]        data_o,
     input wire [`RegBus]        data_i,
     output reg                  done_o,
     // ctrl_mem
@@ -75,20 +75,17 @@ module cache_d(
     wire [`DCacheTag]       tag    = addr_i[`DCacheTag];
     wire [`DCacheOffset]    offset = addr_i[`DCacheOffset];
 
-    wire buffer_miss = !w_wait_t && (buffer_addr != (addr_i - offset));       
+    wire buffer_miss = !w_wait_t || (buffer_addr - buffer_addr[`DCacheOffset] != (addr_i - offset));       
 
     wire io = (addr_i[17 : 16] == 2'b11);
     
-    reg  [`ByteBus] io_r_data;
-    reg  [`ByteBus] io_w_data;
 
     initial begin
         cache_dirty <= 0;
         cache_valid <= 0;
     end
 
-    reg [`ByteBus]  cur_r_data[3 : 0];
-    
+    /*
     always @ (*) begin
         if (io) begin
             data_o <= io_r_data;        
@@ -109,10 +106,11 @@ module cache_d(
                         cur_r_data[1], 
                         cur_r_data[0]
                     };
+                default: data_o <= 0;
             endcase    
         end
-        
     end
+    */  
     
     reg load_request;
     reg write_request;
@@ -130,36 +128,27 @@ module cache_d(
             if (io) begin
                 if (r_done_i) begin
                     done_o = `True;
-                    io_r_data = r_data_i;
+                    data_o = r_data_i;
                 end else 
                     load_request = `True;
-            end if (cache_valid[index] && tag == cache_tag[index]) begin {
-                    cur_r_data[3], 
-                    cur_r_data[2], 
-                    cur_r_data[1], 
-                    cur_r_data[0]
-                } = cache_data[index];
-                done_o <= `True;
+            end if (cache_valid[index] && tag == cache_tag[index]) begin 
+                if (len_i == 0)
+                    data_o = cache_data[index][offset*8+:8]; 
+                else if (len_i == 1) 
+                    data_o = cache_data[index][offset*8+:16];
+                else 
+                    data_o = cache_data[index];
+                done_o = `True;
             end else if (len_i != 2) begin 
                 if (r_done_i) begin
+                    data_o = r_data_i;
                     done_o = `True;
-                    {
-                        cur_r_data[3], 
-                        cur_r_data[2], 
-                        cur_r_data[1], 
-                        cur_r_data[0]
-                    } = r_data_i;
                 end else
                     load_request = `True;
             end else begin
                 if (r_done_i) begin
+                    data_o = r_data_i;
                     done_o = `True;
-                    {
-                        cur_r_data[3], 
-                        cur_r_data[2], 
-                        cur_r_data[1], 
-                        cur_r_data[0]
-                    } = r_data_i;
                 end else if (!cache_dirty[index]) begin
                     load_request = `True;
                 end else if (!w_wait_t) begin
@@ -232,28 +221,20 @@ module cache_d(
             cache_dirty <= 0;
         end else if (write_request) begin
             cache_dirty[index] <= `True;
-            if (len_i == 0) begin
-                case (offset) 
-                    0: cache_data[index][7 : 0] <= data_i[7 : 0];
-                    1: cache_data[index][15: 8] <= data_i[7 : 0];
-                    2: cache_data[index][23:16] <= data_i[7 : 0];
-                    3: cache_data[index][31:24] <= data_i[7 : 0];
-                endcase 
-            end else if (len_i == 1) begin
-                if (offset[1]) 
-                    cache_data[index][31:16] <= data_i[15: 0];
-                else
-                    cache_data[index][15: 0] <= data_i[15: 0];
+            if (len_i == 0)
+                cache_data[index][offset*8+: 8] <= data_i[7 : 0]; 
+            else if (len_i == 1) begin
+                cache_data[index][offset*8+: 16] <= data_i[15 : 0];
             end else begin
                 cache_data[index] <= data_i;
                 cache_tag[index] <= tag;
                 cache_valid[index] <= `True;
             end
         end else if (r_done_i && update && read_t) begin
-            cache_valid[index] = `True;
-            cache_dirty[index] = `False;
-            cache_tag[index] = tag;
-            cache_data[index] = r_data_i;
+            cache_valid[index] <= `True;
+            cache_dirty[index] <= `False;
+            cache_tag[index] <= tag;
+            cache_data[index] <= r_data_i;
         end
     end
 

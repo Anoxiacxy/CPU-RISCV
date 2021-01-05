@@ -14,7 +14,7 @@
     input wire [2 : 0]          mem_len,
     input wire                  mem_read,
     input wire [`MemAddrBus]    mem_r_addr,
-    output reg [`RegBus]       mem_r_data,
+    output reg [`RegBus]        mem_r_data,
     output reg                  mem_r_done,
     output reg                  mem_r_wait,
 
@@ -61,12 +61,12 @@
     always @ (*) begin
         case (working_type)
             `RamMemr: ram_addr <= (ahead && working_stage == mem_len) ? 
-                            ahead_addr + ahead_stage : mem_w_addr + working_stage;
+                            ahead_addr + ahead_stage : mem_r_addr + working_stage;
             `RamInst: ram_addr <= (ahead && inst_addr == ahead_addr) ? 
                             ahead_addr + ahead_stage : inst_addr + working_stage;
             `RamAhad: ram_addr <= ahead_addr + ahead_stage;
             `RamMemw: ram_addr <= mem_w_addr;
-            `RamAval: ram_addr = 0;
+            default: ram_addr <= 0;
         endcase
     end
 

@@ -9,7 +9,7 @@ module reg_mem_wb(
 
     output reg [`RegAddrBus]    rd_addr_o, //
     output reg                  rd_write_o, //
-    output reg [`RegBus]        rd_data_o, //
+    output reg [`RegBus]        rd_data_o //
 );
 
     always @ (posedge clk or posedge rst) begin

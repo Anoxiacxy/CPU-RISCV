@@ -1,12 +1,13 @@
-//#include "io.h"
+#include "io.h"
+int gcd(int x, int y) {
+  if (x%y == 0) return y;
+  else return gcd(y, x%y);
+}
 
-int main(){
+int main() {
+    outlln(gcd(10,1));
+    outlln(gcd(34986,3087));
+    outlln(gcd(2907,1539));
 
-	//outlln(1);
-	int a[2];
-	a[0] = 0;
-	a[1] = 1;
-	for (int i = 0; i < 2; i++)
-		if (a[i] != i)
-			while(1);
+    return 0;
 }

@@ -1,12 +1,38 @@
-//#include "io.h"
+#include "io.h"
+//Target: use loops to calculate calculator of 6!
+//@author yixi
 
-int main(){
+int N;
+int h = 99;
+int i = 100;
+int j = 101;
+int k = 102;
+int total = 0;
 
-	//outlln(1);
-	int a[2];
-	a[0] = 0;
-	a[1] = 1;
-	for (int i = 0; i < 2; i++)
-		if (a[i] != i)
-			while(1);
+int main() {
+  	int a;
+    int b;
+	int c;
+	int d;
+	int e;
+	int f;
+	N=2;
+	for ( a=1; a<=N; a++ )
+	for ( b=1; b<=N; b++ )
+	for ( c=1; c<=N; c++ )	
+	for ( d=1; d<=N; d++ )
+	for ( e=1; e<=N; e++ )
+	for ( f=1; f<=N; f++ )
+		if (a!=b && a!=c && a!=d && a!=e && a!=f && a!=h && a!=i && a!=j && a!=k
+              && b!=c && b!=d && b!=e && b!=f && b!=h && b!=i && b!=j && b!=k
+              && c!=d && c!=e && c!=f && c!=h && c!=i && c!=j && c!=k
+              && d!=e && d!=f && d!=h && d!=i && d!=j && d!=k
+              && e!=f && e!=h && e!=i && e!=j && e!=k
+              && f!=h && f!=i && f!=j && f!=k && i!=j && h!=k)
+		{
+			total++;
+		}
+	
+	outlln(total);
+	return 0;
 }

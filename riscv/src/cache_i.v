@@ -61,9 +61,9 @@ module cache_i(
         if (rst) begin 
             cache_valid <= 0;
         end else if (done_i) begin
-            cache_valid[index] = `True;
-            cache_tag[index] = tag;
-            cache_data[index] = data_i;
+            cache_valid[index] <= `True;
+            cache_tag[index] <= tag;
+            cache_data[index] <= data_i;
         end
     end
 

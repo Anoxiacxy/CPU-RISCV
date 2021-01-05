@@ -1,0 +1,8 @@
+prefix=/mnt/c/Users/Anoxiacxy/Documents/Github/CPU-RISCV/serial/build/devel
+
+Name: serial
+Description: Description of serial
+Version: 1.2.1
+Cflags: -I/mnt/c/Users/Anoxiacxy/Documents/Github/CPU-RISCV/serial/include
+Libs: -L${prefix}/lib -lserial -lrt -lpthread
+Requires: 

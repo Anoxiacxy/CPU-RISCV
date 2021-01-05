@@ -10,13 +10,15 @@ module reg_id_ex (
     input wire [`RegBus]        rs1_data_i,
     input wire [`RegBus]        imm1_i,
     input wire imm_rs1_sel_i,
+    
     input wire [`RegBus]        rs2_data_i,
     input wire [`RegBus]        imm2_i,
     input wire imm_rs2_sel_i,
 
-    output reg [`RegBus]        rs1_data_o;
+    output reg [`RegBus]        rs1_data_o,
     output reg [`RegBus]        imm1_o,
     output reg imm_rs1_sel_o,
+    
     output reg [`RegBus]        rs2_data_o,
     output reg [`RegBus]        imm2_o,
     output reg imm_rs2_sel_o,
@@ -48,6 +50,7 @@ module reg_id_ex (
 
     input wire predict_result_i,
     input wire [`InstAddrBus]   npc_i,
+    
     output reg predict_result_o, //
     output reg [`InstAddrBus]   npc_o
 
