@@ -1,0 +1,192 @@
+Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
+| Date         : Thu Jan  7 14:54:27 2021
+| Host         : SK-20201110NLEU running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file riscv_top_control_sets_placed.rpt
+| Design       : riscv_top
+| Device       : xc7a35t
+--------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Total control sets                                       |   114 |
+|    Minimum number of control sets                        |   114 |
+|    Addition due to synthesis replication                 |     0 |
+|    Addition due to physical synthesis replication        |     0 |
+| Unused register locations in slices containing registers |    95 |
++----------------------------------------------------------+-------+
+* Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
+** Run report_qor_suggestions for automated merging and remapping suggestions
+
+
+2. Histogram
+------------
+
++--------------------+-------+
+|       Fanout       | Count |
++--------------------+-------+
+| Total control sets |   114 |
+| >= 0 to < 4        |     2 |
+| >= 4 to < 6        |     5 |
+| >= 6 to < 8        |     1 |
+| >= 8 to < 10       |    20 |
+| >= 10 to < 12      |     5 |
+| >= 12 to < 14      |    32 |
+| >= 14 to < 16      |     0 |
+| >= 16              |    49 |
++--------------------+-------+
+* Control sets can be remapped at either synth_design or opt_design
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |              30 |           11 |
+| No           | No                    | Yes                    |              69 |           18 |
+| No           | Yes                   | No                     |             318 |          126 |
+| Yes          | No                    | No                     |             145 |           56 |
+| Yes          | No                    | Yes                    |             142 |           46 |
+| Yes          | Yes                   | No                     |            5801 |         2240 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++--------------------------+---------------------------------------------------------------------+-------------------------------------+------------------+----------------+--------------+
+|       Clock Signal       |                            Enable Signal                            |           Set/Reset Signal          | Slice Load Count | Bel Load Count | Bels / Slice |
++--------------------------+---------------------------------------------------------------------+-------------------------------------+------------------+----------------+--------------+
+|  NEW_CLOCK/inst/clk_out1 |                                                                     | btnC_IBUF                           |                1 |              2 |         2.00 |
+|  NEW_CLOCK/inst/clk_out1 |                                                                     |                                     |                2 |              3 |         1.50 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_execute_cnt_reg[8][0]                  | rst                                 |                3 |              4 |         1.33 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_blk/d_baud_clk_tick_cnt                       | rst                                 |                2 |              4 |         2.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_blk/d_oversample_tick_cnt                     | rst                                 |                2 |              4 |         2.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_blk/q_state[4]_i_1__0_n_0                     | rst                                 |                2 |              5 |         2.50 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_blk/q_state[4]_i_1_n_0                        | rst                                 |                2 |              5 |         2.50 |
+|  clk_0                   | cpu0/cache_d_/len_o_reg[2]_1                                        | cpu0/cache_d_/len_o_reg[0]_0        |                2 |              7 |         3.50 |
+|  clk_0                   | cpu0/reg_ex_mem_/p_0_in0_out[1]                                     |                                     |                2 |              8 |         4.00 |
+|  clk_0                   | cpu0/reg_ex_mem_/p_0_in0_out[0]                                     |                                     |                2 |              8 |         4.00 |
+|  clk_0                   | cpu0/reg_ex_mem_/p_0_in0_out[2]                                     |                                     |                2 |              8 |         4.00 |
+|  clk_0                   | cpu0/ctrl_ram_/inst_buffer                                          |                                     |                5 |              8 |         1.60 |
+|  clk_0                   | cpu0/ctrl_ram_/inst_buffer[0][7]_i_1_n_0                            |                                     |                3 |              8 |         2.67 |
+|  clk_0                   | cpu0/ctrl_ram_/inst_buffer[2][7]_i_1_n_0                            |                                     |                3 |              8 |         2.67 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_fifo/q_decode_cnt_reg[0]                      | rst                                 |                3 |              8 |         2.67 |
+|  clk_0                   | cpu0/ctrl_ram_/inst_buffer[1][7]_i_1_n_0                            |                                     |                5 |              8 |         1.60 |
+|  clk_0                   | cpu0/ctrl_ram_/read_buffer[0][7]_i_1_n_0                            |                                     |                5 |              8 |         1.60 |
+|  clk_0                   | cpu0/ctrl_ram_/read_buffer[1][7]_i_1_n_0                            |                                     |                2 |              8 |         4.00 |
+|  clk_0                   | cpu0/ctrl_ram_/read_buffer                                          |                                     |                2 |              8 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 |                                                                     | cpu0/ctrl_ram_/q_io_en_reg_4[0]     |                1 |              8 |         8.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_fifo/E[0]                                     | rst                                 |                4 |              8 |         2.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_fifo/q_empty_reg_2                            | rst                                 |                5 |              8 |         1.60 |
+|  NEW_CLOCK/inst/clk_out1 |                                                                     | cpu0/ctrl_ram_/q_io_en_reg_3[0]     |                3 |              8 |         2.67 |
+|  NEW_CLOCK/inst/clk_out1 |                                                                     | cpu0/ctrl_ram_/SR[0]                |                3 |              8 |         2.67 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_blk/d_data                                    | rst                                 |                2 |              8 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_blk/d_data                                    | rst                                 |                2 |              8 |         4.00 |
+|  clk_0                   | cpu0/reg_ex_mem_/p_0_in0_out[3]                                     |                                     |                2 |              8 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_fifo/E[1]                                     | rst                                 |                3 |              9 |         3.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/wr_en_prot                                          | rst                                 |                4 |             10 |         2.50 |
+|  NEW_CLOCK/inst/clk_out1 | cpu0/ctrl_ram_/rd_en_prot_0                                         | rst                                 |                5 |             10 |         2.00 |
+|  clk_0                   | cpu0/reg_ex_mem_/cache_tag0_out                                     |                                     |                3 |             10 |         3.33 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_blk/rd_en_prot                                | rst                                 |                4 |             10 |         2.50 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/wr_en_prot                               | rst                                 |                4 |             10 |         2.50 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_512_575_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_448_511_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_0_63_0_2_i_1_n_0                   |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_768_831_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_704_767_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_896_959_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_960_1023_0_2_i_1_n_0               |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_832_895_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_256_319_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_192_255_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_320_383_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_128_191_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_640_703_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_576_639_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_384_447_0_2_i_1_n_0                |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_0_63_0_2_i_1__0_n_0     |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_192_255_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_256_319_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_128_191_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_64_127_0_2_i_1__0_n_0   |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_384_447_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_448_511_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_704_767_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_640_703_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_512_575_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_576_639_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_960_1023_0_2_i_1__0_n_0 |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_896_959_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_768_831_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_832_895_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/io_in_fifo/q_data_array_reg_64_127_0_2_i_1_n_0                 |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_tx_fifo/q_data_array_reg_320_383_0_2_i_1__0_n_0  |                                     |                3 |             12 |         4.00 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/uart_blk/uart_rx_blk/p_0_in                                    |                                     |                2 |             16 |         8.00 |
+|  clk_0                   | cpu0/reg_ex_mem_/mem_addr_o_reg[16]_0[0]                            | cpu0/cache_d_/buffer_len[1]_i_1_n_0 |                5 |             18 |         3.60 |
+|  clk_0                   | cpu0/reg_id_ex_/p_0_in_0                                            |                                     |                3 |             22 |         7.33 |
+|  clk_0                   | cpu0/cache_d_/len_o_reg[2]_1                                        |                                     |               11 |             25 |         2.27 |
+|  clk_0                   |                                                                     |                                     |                9 |             27 |         3.00 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[1]_5                                  | cpu0/ctrl_ram_/rst_reg              |               14 |             32 |         2.29 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[2]_0                                  | cpu0/ctrl_ram_/rst_reg              |               10 |             32 |         3.20 |
+|  NEW_CLOCK/inst/clk_out1 | hci0/q_cpu_cycle_cnt[0]_i_1_n_0                                     | rst                                 |                8 |             32 |         4.00 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_1                                  | cpu0/ctrl_ram_/rst_reg              |               11 |             32 |         2.91 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[2]_3                                  | cpu0/ctrl_ram_/rst_reg              |               12 |             32 |         2.67 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_2                                  | cpu0/ctrl_ram_/rst_reg              |               15 |             32 |         2.13 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_6                                  | cpu0/ctrl_ram_/rst_reg              |               10 |             32 |         3.20 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_4                                  | cpu0/ctrl_ram_/rst_reg              |               12 |             32 |         2.67 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_0                                  | cpu0/ctrl_ram_/rst_reg              |               14 |             32 |         2.29 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[2]_4                                  | cpu0/ctrl_ram_/rst_reg              |               10 |             32 |         3.20 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[4]_2                                  | cpu0/ctrl_ram_/rst_reg              |               12 |             32 |         2.67 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[2]_1                                  | cpu0/ctrl_ram_/rst_reg              |               14 |             32 |         2.29 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_7                                  | cpu0/ctrl_ram_/rst_reg              |               11 |             32 |         2.91 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[4]_0                                  | cpu0/ctrl_ram_/rst_reg              |               14 |             32 |         2.29 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_3                                  | cpu0/ctrl_ram_/rst_reg              |               16 |             32 |         2.00 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[4]_1                                  | cpu0/ctrl_ram_/rst_reg              |                9 |             32 |         3.56 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[2]_2                                  | cpu0/ctrl_ram_/rst_reg              |               12 |             32 |         2.67 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[3]_5                                  | cpu0/ctrl_ram_/rst_reg              |               11 |             32 |         2.91 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[4]_4                                  | cpu0/ctrl_ram_/rst_reg              |               14 |             32 |         2.29 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[4]_3                                  | cpu0/ctrl_ram_/rst_reg              |               14 |             32 |         2.29 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[0]_4                                  | cpu0/ctrl_ram_/rst_reg              |               11 |             32 |         2.91 |
+|  clk_0                   | cpu0/ctrl_ram_/inst_done_reg_2[0]                                   | cpu0/ctrl_ram_/rst_reg              |               19 |             32 |         1.68 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[0]_0                                  | cpu0/ctrl_ram_/rst_reg              |               13 |             32 |         2.46 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[1]_1                                  | cpu0/ctrl_ram_/rst_reg              |               14 |             32 |         2.29 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[0]_2                                  | cpu0/ctrl_ram_/rst_reg              |               13 |             32 |         2.46 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[0]_3                                  | cpu0/ctrl_ram_/rst_reg              |               13 |             32 |         2.46 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[0]_5                                  | cpu0/ctrl_ram_/rst_reg              |               12 |             32 |         2.67 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[0]_6                                  | cpu0/ctrl_ram_/rst_reg              |                9 |             32 |         3.56 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[1]_0                                  | cpu0/ctrl_ram_/rst_reg              |               12 |             32 |         2.67 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[1]_2                                  | cpu0/ctrl_ram_/rst_reg              |               13 |             32 |         2.46 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[1]_3                                  | cpu0/ctrl_ram_/rst_reg              |               12 |             32 |         2.67 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[1]_4                                  | cpu0/ctrl_ram_/rst_reg              |               10 |             32 |         3.20 |
+|  clk_0                   | cpu0/reg_mem_wb/rd_addr_o_reg[0]_1                                  | cpu0/ctrl_ram_/rst_reg              |               15 |             32 |         2.13 |
+|  clk_0                   | cpu0/ctrl_ram_/inst_done_reg_0                                      |                                     |               11 |             42 |         3.82 |
+|  clk_0                   | cpu0/reg_ex_mem_/mem_addr_o_reg[16]_0[0]                            | cpu0/ctrl_ram_/rst_reg              |               12 |             48 |         4.00 |
+|  clk_0                   | cpu0/reg_id_ex_/p_0_in                                              |                                     |                6 |             48 |         8.00 |
+|  NEW_CLOCK/inst/clk_out1 |                                                                     | rst                                 |               23 |             49 |         2.13 |
+|  clk_0                   | cpu0/ctrl_ram_/ahead_addr[31]_i_1_n_0                               |                                     |               20 |             64 |         3.20 |
+|  clk_0                   | cpu0/ctrl_ram_/inst_done_reg_1                                      | cpu0/reg_if_id_/pc_o0_n_0           |               52 |            107 |         2.06 |
+|  clk_0                   | cpu0/ctrl_ram_/E[0]                                                 | cpu0/ctrl_ram_/rst_reg              |               34 |            108 |         3.18 |
+|  clk_0                   |                                                                     | cpu0/ctrl_ram_/rst_reg              |              113 |            312 |         2.76 |
+|  clk_0                   | cpu0/reg_id_ex_/pc_o[31]_i_1_n_0                                    | cpu0/reg_id_ex_/pc_o0_n_0           |              236 |            392 |         1.66 |
+|  clk_0                   | cpu0/reg_id_ex_/jump_o_reg_0[0]                                     | cpu0/ctrl_ram_/rst_reg              |              325 |           1032 |         3.18 |
+|  clk_0                   | cpu0/reg_id_ex_/E[0]                                                | cpu0/ctrl_ram_/rst_reg              |             1164 |           3064 |         2.63 |
++--------------------------+---------------------------------------------------------------------+-------------------------------------+------------------+----------------+--------------+
+
+

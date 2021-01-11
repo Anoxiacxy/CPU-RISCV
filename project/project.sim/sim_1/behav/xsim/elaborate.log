@@ -1,8 +1,96 @@
 Vivado Simulator 2020.1
 Copyright 1986-1999, 2001-2020 Xilinx, Inc. All Rights Reserved.
-Running: C:/Xilinx/Vivado/2020.1/bin/unwrapped/win64.o/xelab.exe -wto 3db44e50cbf048f6b31f597da8815204 --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot testbench_behav xil_defaultlib.testbench xil_defaultlib.glbl -log elaborate.log 
+Running: C:/Xilinx/Vivado/2020.1/bin/unwrapped/win64.o/xelab.exe -wto a850d305b70a4f3ab945e683abeb0cc7 --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot testbench_behav xil_defaultlib.testbench xil_defaultlib.glbl -log elaborate.log 
 Using 2 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
 Completed static elaboration
-INFO: [XSIM 43-4323] No Change in HDL. Linking previously generated obj files to create kernel
+Starting simulation data flow analysis
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/riscv_top.v" Line 4. Module riscv_top(SIM=1) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ram.v" Line 3. Module ram doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/block_ram/block_ram.v" Line 62. Module single_port_ram_sync(ADDR_WIDTH=17) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v" Line 4. Module cpu doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ctrl_stall.v" Line 2. Module ctrl_stall doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ctrl_branch.v" Line 3. Module ctrl_branch doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ctrl_ram.v" Line 2. Module ctrl_ram doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cache_i.v" Line 2. Module cache_i doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cache_d.v" Line 2. Module cache_d doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_file.v" Line 2. Module reg_file doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_pc.v" Line 2. Module reg_pc doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_if.v" Line 2. Module stage_if doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_if_id.v" Line 2. Module reg_if_id doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_id.v" Line 3. Module stage_id doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_id_ex.v" Line 2. Module reg_id_ex doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_ex.v" Line 3. Module stage_ex doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_ex_mem.v" Line 2. Module reg_ex_mem doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_mem.v" Line 2. Module stage_mem doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_mem_wb.v" Line 2. Module reg_mem_wb doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_wb.v" Line 2. Module stage_wb doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/hci.v" Line 30. Module hci doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/fifo/fifo.v" Line 27. Module fifo(ADDR_BITS=10) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart.v" Line 28. Module uart(SYS_CLK_FREQ=100000000,BAUD_RATE=115200,PARITY_MODE=1) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart_baud_clk.v" Line 29. Module uart_baud_clk(SYS_CLK_FREQ=100000000,BAUD=115200) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart_rx.v" Line 28. Module uart_rx_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart_tx.v" Line 28. Module uart_tx_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/fifo/fifo.v" Line 27. Module fifo doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/fifo/fifo.v" Line 27. Module fifo(ADDR_BITS=10) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/riscv_top.v" Line 4. Module riscv_top(SIM=1) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ram.v" Line 3. Module ram doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/block_ram/block_ram.v" Line 62. Module single_port_ram_sync(ADDR_WIDTH=17) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cpu.v" Line 4. Module cpu doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ctrl_stall.v" Line 2. Module ctrl_stall doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ctrl_branch.v" Line 3. Module ctrl_branch doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/ctrl_ram.v" Line 2. Module ctrl_ram doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cache_i.v" Line 2. Module cache_i doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/cache_d.v" Line 2. Module cache_d doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_file.v" Line 2. Module reg_file doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_pc.v" Line 2. Module reg_pc doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_if.v" Line 2. Module stage_if doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_if_id.v" Line 2. Module reg_if_id doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_id.v" Line 3. Module stage_id doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_id_ex.v" Line 2. Module reg_id_ex doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_ex.v" Line 3. Module stage_ex doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_ex_mem.v" Line 2. Module reg_ex_mem doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_mem.v" Line 2. Module stage_mem doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/reg_mem_wb.v" Line 2. Module reg_mem_wb doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/stage_wb.v" Line 2. Module stage_wb doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/hci.v" Line 30. Module hci doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/fifo/fifo.v" Line 27. Module fifo(ADDR_BITS=10) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart.v" Line 28. Module uart(SYS_CLK_FREQ=100000000,BAUD_RATE=115200,PARITY_MODE=1) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart_baud_clk.v" Line 29. Module uart_baud_clk(SYS_CLK_FREQ=100000000,BAUD=115200) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart_rx.v" Line 28. Module uart_rx_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/uart/uart_tx.v" Line 28. Module uart_tx_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/fifo/fifo.v" Line 27. Module fifo doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/common/fifo/fifo.v" Line 27. Module fifo(ADDR_BITS=10) doesn't have a timescale but at least one module in design has a timescale.
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.single_port_ram_sync(ADDR_WIDTH=...
+Compiling module xil_defaultlib.ram
+Compiling module xil_defaultlib.ctrl_stall
+Compiling module xil_defaultlib.ctrl_branch
+Compiling module xil_defaultlib.ctrl_ram
+Compiling module xil_defaultlib.cache_i
+Compiling module xil_defaultlib.cache_d
+Compiling module xil_defaultlib.reg_file
+Compiling module xil_defaultlib.reg_pc
+Compiling module xil_defaultlib.stage_if
+Compiling module xil_defaultlib.reg_if_id
+Compiling module xil_defaultlib.stage_id
+Compiling module xil_defaultlib.reg_id_ex
+Compiling module xil_defaultlib.stage_ex
+Compiling module xil_defaultlib.reg_ex_mem
+Compiling module xil_defaultlib.stage_mem
+Compiling module xil_defaultlib.reg_mem_wb
+Compiling module xil_defaultlib.stage_wb
+Compiling module xil_defaultlib.cpu
+Compiling module xil_defaultlib.fifo(ADDR_BITS=10)
+Compiling module xil_defaultlib.uart_baud_clk(SYS_CLK_FREQ=10000...
+Compiling module xil_defaultlib.uart_rx_default
+Compiling module xil_defaultlib.uart_tx_default
+Compiling module xil_defaultlib.fifo
+Compiling module xil_defaultlib.uart(SYS_CLK_FREQ=100000000,BAUD...
+Compiling module xil_defaultlib.hci
+Compiling module xil_defaultlib.riscv_top(SIM=1)
+Compiling module xil_defaultlib.testbench
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot testbench_behav

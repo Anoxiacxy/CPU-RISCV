@@ -1,0 +1,6 @@
+Vivado Simulator 2020.1
+Time resolution is 1 ps
+wwaa
+
+IO:Return
+$finish called at time : 895 ns : File "C:/Users/Anoxiacxy/Documents/Github/CPU-RISCV/riscv/src/hci.v" Line 260
